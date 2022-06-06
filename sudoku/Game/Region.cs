@@ -6,7 +6,14 @@ using System.Threading.Tasks;
 
 namespace sudoku.Game
 {
-    public class Region
-    {
-    }
+	public class Region : Group
+	{
+		public Region(Cell[] cells) : base(cells)
+		{
+			foreach(Cell cell in Cells)
+			{
+				cell.Region = this;
+			}
+		}
+	}
 }

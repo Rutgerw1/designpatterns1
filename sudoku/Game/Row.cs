@@ -6,7 +6,10 @@ using System.Threading.Tasks;
 
 namespace sudoku.Game
 {
-    public class Row
-    {
-    }
+	public class Row : Group
+	{
+		public Row(Cell[] cells) : base(cells)
+		{
+		}
+	}
 }

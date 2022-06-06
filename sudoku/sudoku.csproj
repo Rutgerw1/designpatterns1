@@ -35,6 +35,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -59,6 +60,7 @@
     <Compile Include="SolvingAlgorithm\BacktrackAlgorithm.cs" />
     <Compile Include="SolvingAlgorithm\ISolvingAlgorithm.cs" />
     <Compile Include="View\GameView.cs" />
+    <Compile Include="View\InputHandler.cs" />
     <Compile Include="View\IView.cs" />
     <Compile Include="View\MainView.cs" />
   </ItemGroup>
