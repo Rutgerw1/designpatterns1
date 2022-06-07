@@ -8,8 +8,8 @@ namespace sudoku.Game
 {
     public class Cell
     {
-        private int _number;
-        public int Number { get => _number; set => _number = value; }
+        private int? _number;
+        public int? Number { get => _number; set => _number = value; }
 
         private int[] _notes;
         public int[] Notes { get => _notes; set => _notes = value; }

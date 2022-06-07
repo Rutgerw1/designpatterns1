@@ -54,5 +54,17 @@ namespace sudoku.Game
 				_location.Y = nextY;
 			}
 		}
-	}
+
+        public void ChangeCellValue(int number)
+        {
+			if (_rows[_location.Y].Cells[_location.X].Number == number)
+            {
+				_rows[_location.Y].Cells[_location.X].Number = 0;
+			}
+			else
+            {
+				_rows[_location.Y].Cells[_location.X].Number = number;
+            }
+        }
+    }
 }

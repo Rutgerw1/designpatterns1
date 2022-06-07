@@ -58,7 +58,8 @@ namespace sudoku.View
 			while (!quitGame)
             {
 				gameView.PrintGame();
-				switch (Console.ReadKey().Key)
+				ConsoleKeyInfo input = Console.ReadKey();
+				switch (input.Key)
                 {
 					case ConsoleKey.Escape:
 						quitGame = true;
@@ -83,6 +84,12 @@ namespace sudoku.View
 						break;
 					case ConsoleKey.S:
 						//solve
+						break;
+					default:
+						if (char.IsDigit(input.KeyChar))
+                        {
+							puzzle.ChangeCellValue(int.Parse(input.KeyChar.ToString()));
+                        }
 						break;
 				}
             }
