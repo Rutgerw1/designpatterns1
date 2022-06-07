@@ -8,6 +8,6 @@ namespace sudoku.View
 {
     interface IView
     {
-        void PrintMessage(string message, ConsoleColor color);
+        void PrintMessage(string message, ConsoleColor backgroundColor, ConsoleColor foregroundColor);
     }
 }

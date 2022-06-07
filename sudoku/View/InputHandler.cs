@@ -50,5 +50,43 @@ namespace sudoku.View
 
 			return _puzzle;
 		}
-	}
+
+        public void playGame(Puzzle puzzle)
+        {
+			GameView gameView = new GameView(puzzle);
+			bool quitGame = false;
+			while (!quitGame)
+            {
+				gameView.PrintGame();
+				switch (Console.ReadKey().Key)
+                {
+					case ConsoleKey.Escape:
+						quitGame = true;
+						break;
+					case ConsoleKey.UpArrow:
+						puzzle.TryMove(Direction.Up);
+						break;
+					case ConsoleKey.RightArrow:
+						puzzle.TryMove(Direction.Right);
+						break;
+					case ConsoleKey.DownArrow:
+						puzzle.TryMove(Direction.Down);
+						break;
+					case ConsoleKey.LeftArrow:
+						puzzle.TryMove(Direction.Left);
+						break;
+					case ConsoleKey.Spacebar:
+						//switch editor modes;
+						break;
+					case ConsoleKey.C:
+						//check;
+						break;
+					case ConsoleKey.S:
+						//solve
+						break;
+				}
+            }
+		
+		}
+    }
 }

@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Game\Cell.cs" />
+    <Compile Include="Game\DirectionEnum.cs" />
     <Compile Include="Game\Column.cs" />
     <Compile Include="Game\Group.cs" />
     <Compile Include="Game\Puzzle.cs" />

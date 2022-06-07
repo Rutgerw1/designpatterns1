@@ -17,6 +17,10 @@ namespace sudoku.Game
 		private Region[] _regions;
 		public Region[] Regions { get => _regions; }
 
+        private (int X, int Y) _location = (0, 0); 
+        public (int X, int Y) Location { get => _location; }
+
+
 		public Puzzle(Row[] rows, Column[] columns, Region[] regions)
 		{
 			_rows = rows;
@@ -24,5 +28,31 @@ namespace sudoku.Game
 			_regions = regions;
 		}
 
+		public void TryMove(Direction direction)
+        {
+			int nextX = _location.X;
+			int nextY = _location.Y;
+
+			switch (direction)
+			{
+				case Direction.Up:
+					nextY = _location.Y - 1;
+					break;
+				case Direction.Right:
+					nextX = _location.X + 1;
+					break;
+				case Direction.Down:
+					nextY = _location.Y + 1;
+					break;
+				case Direction.Left:
+					nextX = _location.X - 1;
+					break;
+			}
+			if (!(nextX == _columns.Length || nextX == -1 || nextY == _rows.Length || nextY == -1))
+			{
+				_location.X = nextX;
+				_location.Y = nextY;
+			}
+		}
 	}
 }

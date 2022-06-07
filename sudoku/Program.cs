@@ -21,9 +21,7 @@ namespace sudoku
 
             if (puzzle != null)
             {
-                GameView gameView = new GameView(puzzle);
-                gameView.PrintGame();
-                Console.ReadKey();
+                inputHandler.playGame(puzzle);
             }
         }
     }

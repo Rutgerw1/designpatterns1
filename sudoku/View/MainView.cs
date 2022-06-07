@@ -8,7 +8,7 @@ namespace sudoku.View
 {
     class MainView : IView
     {
-        public void PrintMessage(string message, ConsoleColor color = ConsoleColor.White)
+        public void PrintMessage(string message, ConsoleColor foregroundColor = ConsoleColor.White, ConsoleColor backgroundColor = ConsoleColor.Black)
 		{
             Console.WriteLine(message);
         }

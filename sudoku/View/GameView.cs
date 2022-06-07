@@ -16,23 +16,24 @@ namespace sudoku.View
 			_puzzle = puzzle;
 		}
 
-		public void PrintMessage(string message, ConsoleColor color = ConsoleColor.White)
+		public void PrintMessage(string message, ConsoleColor foregroundColor = ConsoleColor.White, ConsoleColor backgroundColor = ConsoleColor.Black)
 		{
-			Console.ForegroundColor = color;
+			Console.ForegroundColor = foregroundColor;
+			Console.BackgroundColor = backgroundColor;
 			Console.Write(message);
 		}
 
 		public void PrintGame()
 		{
 			Console.Clear();
-			_puzzle.Rows.ToList().ForEach(row =>
-			{
-				PrintRow(row);
-			});
+            for (int i = 0; i < _puzzle.Rows.Length; i++)
+            {
+				PrintRow(_puzzle.Rows[i], i);
+            }
 			PrintRowSeparator(_puzzle.Rows[0].Cells.Length, _puzzle.Rows.Length);
 		}
 
-		public void PrintRow(Row row)
+		public void PrintRow(Row row, int currentRow)
 		{
 			PrintRowSeparator(row.Cells.Length, Array.IndexOf(_puzzle.Rows, row));
 			for (int i = 0; i < row.Cells.Length; i++)
@@ -45,8 +46,15 @@ namespace sudoku.View
 				{
 					PrintMessage(" | ");
 				}
-
-				PrintMessage(row.Cells[i].ToString());
+				if (_puzzle.Location.Y == currentRow && _puzzle.Location.X == i)
+                {
+					PrintMessage(row.Cells[i].ToString(), backgroundColor: ConsoleColor.DarkYellow);
+				}
+				else
+                {
+					PrintMessage(row.Cells[i].ToString());
+				}
+				
 			}
 			PrintMessage(" |\n");
 		}
@@ -67,15 +75,8 @@ namespace sudoku.View
 				{
 					cell2 = _puzzle.Rows[rowNumber].Cells[i];
 				}
-
-				if (IsSameRegion(cell1, cell2))
-				{
-					PrintMessage("---", ConsoleColor.DarkBlue);
-				}
-				else
-				{
-					PrintMessage("---");
-				}
+					ConsoleColor color = !IsSameRegion(cell1, cell2) ? ConsoleColor.White : ConsoleColor.DarkBlue;
+					PrintMessage("---", color);
 			}
 			PrintMessage("+\n");
 		}
