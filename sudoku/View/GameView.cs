@@ -45,7 +45,7 @@ namespace sudoku.View
 				Cell currentCell = row.Cells[i];
 
 				ConsoleColor color = ConsoleColor.White;
-				if (IsSameRegion(previousCell, currentCell))
+				if (AreSameRegion(new Cell[] { previousCell, currentCell }))
 				{
 					color = ConsoleColor.DarkBlue;
 				}
@@ -104,8 +104,9 @@ namespace sudoku.View
 					(cell3 != null && cell3.IsActive) ||
 					(cell4 != null && cell4.IsActive);
 
-				ConsoleColor color = !IsSameRegion(cell1, cell2) ? ConsoleColor.White : ConsoleColor.DarkBlue;
-				PrintMessage(printCellCrossing ? "+" : " ");
+				ConsoleColor color = !AreSameRegion(new Cell[] { cell1, cell2, cell3, cell4 }) ? ConsoleColor.White : ConsoleColor.DarkBlue;
+				PrintMessage(printCellCrossing ? "+" : " ", color);
+				color = !AreSameRegion(new Cell[] { cell1, cell2 }) ? ConsoleColor.White : ConsoleColor.DarkBlue;
 				PrintMessage(printCellSeparator ? "---" : "   ", color);
 				if (i == length - 1)
 				{
@@ -132,9 +133,17 @@ namespace sudoku.View
 			}
 		}
 
-		private bool IsSameRegion(Cell cell1, Cell cell2)
+		private bool AreSameRegion(Cell[] cells)
 		{
-			return cell1?.Region == cell2?.Region;
+			if (cells.Length <= 1)
+			{
+				return true;
+			}
+			if (cells[0]?.Region == cells[1]?.Region)
+			{
+				return AreSameRegion(new ArraySegment<Cell>(cells, 1, cells.Length - 1).ToArray());
+			}
+			return false;
 		}
 	}
 }
