@@ -31,9 +31,36 @@ namespace sudoku.View
 				PrintRow(_puzzle.Rows[i], i);
 			}
 			PrintRowSeparator(_puzzle.Rows[0].Cells.Length, _puzzle.Rows.Length);
-			Console.WindowHeight = _puzzle.Rows.Length * 2 + 1;
-			Console.WindowWidth = _puzzle.Columns.Length * 4 + 3;
+			Console.WindowHeight = Console.CursorTop;
 			Console.SetCursorPosition(0, 0);
+			Console.SetBufferSize(Console.WindowWidth+30, Console.WindowHeight);
+			PrintInstructions();
+		}
+
+		private void PrintInstructions()
+		{
+			Console.SetCursorPosition(Console.WindowWidth - 1, Console.BufferHeight / 2 - 2);
+			PrintMessage("  Quit game: ");
+			PrintMessage("Esc", ConsoleColor.Magenta);
+
+			Console.SetCursorPosition(Console.WindowWidth - 1, Console.BufferHeight / 2 - 1);
+			PrintMessage("  Clear cell: ");
+			PrintMessage("Delete", ConsoleColor.Magenta);
+
+			Console.SetCursorPosition(Console.WindowWidth - 1, Console.BufferHeight / 2);
+			PrintMessage("  Switch modes: ");
+			PrintMessage("Space", ConsoleColor.Magenta);
+
+			Console.SetCursorPosition(Console.WindowWidth - 1, Console.BufferHeight / 2 + 1);
+			PrintMessage("  Check: ");
+			PrintMessage("C", ConsoleColor.Magenta);
+
+			Console.SetCursorPosition(Console.WindowWidth - 1, Console.BufferHeight / 2 + 2);
+			PrintMessage("  Solve: ");
+			PrintMessage("S", ConsoleColor.Magenta);
+
+			Console.WindowWidth = Console.CursorLeft + 13;
+			Console.SetBufferSize(Console.WindowWidth, Console.WindowHeight);
 		}
 
 		public void PrintRow(Row row, int currentRow)
@@ -110,6 +137,7 @@ namespace sudoku.View
 				PrintMessage(printCellSeparator ? "---" : "   ", color);
 				if (i == length - 1)
 				{
+					Console.WindowWidth = Console.CursorLeft + 2;
 					PrintMessage(printCellCrossing ? "+\n" : " \n");
 				}
 			}
