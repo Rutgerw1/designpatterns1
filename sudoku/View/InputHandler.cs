@@ -51,16 +51,19 @@ namespace sudoku.View
 			return _puzzle;
 		}
 
-        public void playGame(Puzzle puzzle)
-        {
+		public void playGame(Puzzle puzzle)
+		{
 			GameView gameView = new GameView(puzzle);
 			bool quitGame = false;
+			gameView.PrintGame();
+
 			while (!quitGame)
-            {
-				gameView.PrintGame();
+			{
 				ConsoleKeyInfo input = Console.ReadKey();
+				(int X, int Y)[] redrawLocations = new (int X, int Y)[2];
+				redrawLocations[0] = (_puzzle.Location.X, _puzzle.Location.Y);
 				switch (input.Key)
-                {
+				{
 					case ConsoleKey.Escape:
 						quitGame = true;
 						break;
@@ -76,6 +79,10 @@ namespace sudoku.View
 					case ConsoleKey.LeftArrow:
 						puzzle.TryMove(Direction.Left);
 						break;
+					case ConsoleKey.Backspace:
+					case ConsoleKey.Delete:
+						puzzle.ChangeCellValue(0);
+						break;
 					case ConsoleKey.Spacebar:
 						//switch editor modes;
 						break;
@@ -87,13 +94,14 @@ namespace sudoku.View
 						break;
 					default:
 						if (char.IsDigit(input.KeyChar))
-                        {
+						{
 							puzzle.ChangeCellValue(int.Parse(input.KeyChar.ToString()));
-                        }
+						}
 						break;
 				}
-            }
-		
+				redrawLocations[1] = (_puzzle.Location.X, _puzzle.Location.Y);
+				gameView.RePrintCells(redrawLocations);
+			}
 		}
-    }
+	}
 }

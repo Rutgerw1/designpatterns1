@@ -26,8 +26,8 @@ namespace sudoku.Reader
 			Column[] columns = new Column[groupLength];
 			Region[] regions = new Region[groupLength];
 
-			int sqrtCeiling = (int)Math.Ceiling(Math.Sqrt(groupLength));
 			int sqrtFloor = (int)Math.Sqrt(groupLength);
+			int sqrtInverse = groupLength / sqrtFloor;
 
 			for (int y = 0; y < groupLength; y++)
 			{
@@ -39,15 +39,10 @@ namespace sudoku.Reader
 				{
 					int rowIndex = x + (y * groupLength);
 					int columnIndex = y + (x * groupLength);
-					//int regionIndex =
-					//	x % sqrtCeiling + 
-					//	y * sqrtCeiling + 
-					//	(int)x / sqrtCeiling * groupLength + 
-					//	(int)y / sqrtFloor * (sqrtFloor - 1) * groupLength;
 					int regionIndex =
-						x % sqrtCeiling +
-						y * sqrtCeiling +
-						groupLength * (int)(x / sqrtCeiling + y / sqrtFloor * (sqrtFloor - 1));
+						x % sqrtInverse +
+						y * sqrtInverse +
+						groupLength * (int)(x / sqrtInverse + y / sqrtFloor * (sqrtFloor - 1));
 
 					row[x] = cellArray[rowIndex];
 					column[x] = cellArray[columnIndex];

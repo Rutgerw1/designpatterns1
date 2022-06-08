@@ -48,10 +48,19 @@ namespace sudoku.Game
 					nextX = _location.X - 1;
 					break;
 			}
-			if (!(nextX == _columns.Length || nextX == -1 || nextY == _rows.Length || nextY == -1))
+			// loop back to other side
+			if (nextX == _columns.Length) nextX = 0;
+			if (nextX == -1) nextX = _columns.Length - 1;
+			if (nextY == _rows.Length) nextY = 0;
+			if (nextY == -1) nextY = _rows.Length - 1;
+
+			_location.X = nextX;
+			_location.Y = nextY;
+
+			// recursively move again if new location is inactive cell
+			if (!_rows[nextY].Cells[nextX].IsActive)
 			{
-				_location.X = nextX;
-				_location.Y = nextY;
+				TryMove(direction);
 			}
 		}
 
