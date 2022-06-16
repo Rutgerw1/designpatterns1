@@ -8,7 +8,7 @@ namespace sudoku.Game
 {
 	public class Row : Group
 	{
-		public Row(Cell[] cells) : base(cells)
+		public Row(List<Cell> cells) : base(cells)
 		{
 		}
 	}

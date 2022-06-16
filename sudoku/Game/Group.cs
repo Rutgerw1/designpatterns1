@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace sudoku.Game
 {
-    public class Group
+    public abstract class Group
     {
-        private Cell[] _cells;
-		public Cell[] Cells { get => _cells; }
+        private readonly List<Cell> _cells;
+		public List<Cell> Cells { get => _cells; }
 
-		public Group(Cell[] cells)
+		public Group(List<Cell> cells)
 		{
 			_cells = cells;
 		}

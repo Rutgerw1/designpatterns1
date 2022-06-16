@@ -49,12 +49,12 @@ namespace sudoku.Reader
 					region[x] = cellArray[regionIndex];
 				}
 
-				rows[y] = new Row(row);
-				columns[y] = new Column(column);
-				regions[y] = new Region(region);
+				rows[y] = new Row(row.ToList());
+				columns[y] = new Column(column.ToList());
+				regions[y] = new Region(region.ToList());
 			}
 
-			return new Puzzle(rows, columns, regions);
+			return new Puzzle(rows.ToList(), columns.ToList(), regions.ToList());
 		}
 	}
 }

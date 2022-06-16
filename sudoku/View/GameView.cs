@@ -9,7 +9,7 @@ namespace sudoku.View
 {
 	class GameView : IView
 	{
-		private Puzzle _puzzle;
+		private readonly Puzzle _puzzle;
 
 		public GameView(Puzzle puzzle)
 		{
@@ -26,47 +26,43 @@ namespace sudoku.View
 		public void PrintGame()
 		{
 			Console.Clear();
-			for (int i = 0; i < _puzzle.Rows.Length; i++)
+			Console.CursorVisible = false;
+			for (int i = 0; i < _puzzle.Rows.Count; i++)
 			{
 				PrintRow(_puzzle.Rows[i], i);
 			}
-			PrintRowSeparator(_puzzle.Rows[0].Cells.Length, _puzzle.Rows.Length);
-			Console.WindowHeight = Console.CursorTop;
+			PrintRowSeparator(_puzzle.Rows[0].Cells.Count, _puzzle.Rows.Count);
 			Console.SetCursorPosition(0, 0);
-			Console.SetBufferSize(Console.WindowWidth+30, Console.WindowHeight);
 			PrintInstructions();
 		}
 
 		private void PrintInstructions()
 		{
-			Console.SetCursorPosition(Console.WindowWidth - 1, Console.BufferHeight / 2 - 2);
+			Console.SetCursorPosition(_puzzle.Columns.Count * 4 + 2, _puzzle.Rows.Count - 2);
 			PrintMessage("  Quit game: ");
 			PrintMessage("Esc", ConsoleColor.Magenta);
 
-			Console.SetCursorPosition(Console.WindowWidth - 1, Console.BufferHeight / 2 - 1);
+			Console.SetCursorPosition(_puzzle.Columns.Count * 4 + 2, _puzzle.Rows.Count - 1);
 			PrintMessage("  Clear cell: ");
 			PrintMessage("Delete", ConsoleColor.Magenta);
 
-			Console.SetCursorPosition(Console.WindowWidth - 1, Console.BufferHeight / 2);
+			Console.SetCursorPosition(_puzzle.Columns.Count * 4 + 2, _puzzle.Rows.Count);
 			PrintMessage("  Switch modes: ");
 			PrintMessage("Space", ConsoleColor.Magenta);
 
-			Console.SetCursorPosition(Console.WindowWidth - 1, Console.BufferHeight / 2 + 1);
+			Console.SetCursorPosition(_puzzle.Columns.Count * 4 + 2, _puzzle.Rows.Count + 1);
 			PrintMessage("  Check: ");
 			PrintMessage("C", ConsoleColor.Magenta);
 
-			Console.SetCursorPosition(Console.WindowWidth - 1, Console.BufferHeight / 2 + 2);
+			Console.SetCursorPosition(_puzzle.Columns.Count * 4 + 2, _puzzle.Rows.Count + 2);
 			PrintMessage("  Solve: ");
 			PrintMessage("S", ConsoleColor.Magenta);
-
-			Console.WindowWidth = Console.CursorLeft + 13;
-			Console.SetBufferSize(Console.WindowWidth, Console.WindowHeight);
 		}
 
 		public void PrintRow(Row row, int currentRow)
 		{
-			PrintRowSeparator(row.Cells.Length, Array.IndexOf(_puzzle.Rows, row));
-			for (int i = 0; i < row.Cells.Length; i++)
+			PrintRowSeparator(row.Cells.Count, _puzzle.Rows.IndexOf(row));
+			for (int i = 0; i < row.Cells.Count; i++)
 			{
 				Cell previousCell = i > 0 ? row.Cells[i - 1] : null;
 				Cell currentCell = row.Cells[i];
@@ -89,7 +85,7 @@ namespace sudoku.View
 					bgColor = ConsoleColor.DarkYellow;
 				}
 				PrintMessage(currentCell.ToString(), backgroundColor: bgColor);
-				if (i == row.Cells.Length - 1)
+				if (i == row.Cells.Count - 1)
 				{
 					PrintMessage(printCellSeparator ? " |\n" : "  \n");
 				}
@@ -114,7 +110,7 @@ namespace sudoku.View
 						cell3 = _puzzle.Rows[rowNumber - 1].Cells[i - 1];
 					}
 				}
-				if (rowNumber < _puzzle.Rows.Length)
+				if (rowNumber < _puzzle.Rows.Count)
 				{
 					cell2 = _puzzle.Rows[rowNumber].Cells[i];
 					if (i > 0)
@@ -137,7 +133,6 @@ namespace sudoku.View
 				PrintMessage(printCellSeparator ? "---" : "   ", color);
 				if (i == length - 1)
 				{
-					Console.WindowWidth = Console.CursorLeft + 2;
 					PrintMessage(printCellCrossing ? "+\n" : " \n");
 				}
 			}
@@ -163,15 +158,11 @@ namespace sudoku.View
 
 		private bool AreSameRegion(Cell[] cells)
 		{
-			if (cells.Length <= 1)
-			{
-				return true;
-			}
-			if (cells[0]?.Region == cells[1]?.Region)
-			{
-				return AreSameRegion(new ArraySegment<Cell>(cells, 1, cells.Length - 1).ToArray());
-			}
-			return false;
+			return cells.Length <= 1 ||
+				(
+					cells[0]?.Region == cells[1]?.Region &&
+					AreSameRegion(new ArraySegment<Cell>(cells, 1, cells.Length - 1).ToArray())
+				);
 		}
 	}
 }

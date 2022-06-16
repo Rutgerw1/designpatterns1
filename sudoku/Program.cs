@@ -1,5 +1,6 @@
 ﻿using sudoku.Game;
 using sudoku.Reader;
+using sudoku.SolvingAlgorithm;
 using sudoku.View;
 using System;
 using System.Collections.Generic;
@@ -16,12 +17,13 @@ namespace sudoku
         static void Main(string[] args)
         {
             MainView mainView = new MainView();
-            InputHandler inputHandler = new InputHandler(mainView);
+            ISolvingAlgorithm solver = new BacktrackAlgorithm();
+            InputHandler inputHandler = new InputHandler(mainView, solver);
             Puzzle puzzle = inputHandler.StartGame();
 
             if (puzzle != null)
             {
-                inputHandler.playGame(puzzle);
+                inputHandler.PlayGame(puzzle);
             }
         }
     }

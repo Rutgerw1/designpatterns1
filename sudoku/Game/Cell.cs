@@ -11,11 +11,11 @@ namespace sudoku.Game
 		private int _number;
 		public int Number { get => _number; set => _number = value; }
 
-		private bool _isActive;
+		private readonly bool _isActive;
 		public bool IsActive { get => _isActive; }
 
-		private int[] _notes;
-		public int[] Notes { get => _notes; set => _notes = value; }
+		private List<int> _notes;
+		public List<int> Notes { get => _notes; set => _notes = value; }
 
 		private Region _region;
 		public Region Region { get => _region; set => _region = value; }

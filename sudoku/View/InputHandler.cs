@@ -1,5 +1,6 @@
 ﻿using sudoku.Game;
 using sudoku.Reader;
+using sudoku.SolvingAlgorithm;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,12 +13,14 @@ namespace sudoku.View
 {
 	class InputHandler
 	{
-		private MainView _mainView;
+		private readonly MainView _mainView;
 		private Puzzle _puzzle;
+		private readonly ISolvingAlgorithm _solver;
 
-		public InputHandler(MainView mainView)
+		public InputHandler(MainView mainView, ISolvingAlgorithm solver)
 		{
 			_mainView = mainView;
+			_solver = solver;
 		}
 
 		public Puzzle StartGame()
@@ -36,7 +39,7 @@ namespace sudoku.View
 				{
 					reader = factory.GetReader(ext);
 				}
-				catch (KeyNotFoundException e)
+				catch (KeyNotFoundException)
 				{
 					List<string> typesList = new List<string>(factory.Types.Keys);
 					string typesString = string.Join(", ", typesList.ToArray());
@@ -51,7 +54,7 @@ namespace sudoku.View
 			return _puzzle;
 		}
 
-		public void playGame(Puzzle puzzle)
+		public void PlayGame(Puzzle puzzle)
 		{
 			GameView gameView = new GameView(puzzle);
 			bool quitGame = false;
@@ -87,10 +90,11 @@ namespace sudoku.View
 						//switch editor modes;
 						break;
 					case ConsoleKey.C:
-						//check;
+						//check
 						break;
 					case ConsoleKey.S:
-						//solve
+						_solver.Solve(puzzle);
+						gameView.PrintGame();
 						break;
 					default:
 						if (char.IsDigit(input.KeyChar))

@@ -6,30 +6,34 @@ using System.Threading.Tasks;
 
 namespace sudoku.Game
 {
-    public class Puzzle
-    {
-        private Row[] _rows;
-		public Row[] Rows { get => _rows; }
+	public class Puzzle
+	{
+		private readonly List<Row> _rows;
+		public List<Row> Rows { get => _rows; }
 
-		private Column[] _columns;
-		public Column[] Columns { get => _columns; }
+		private readonly List<Column> _columns;
+		public List<Column> Columns { get => _columns; }
 
-		private Region[] _regions;
-		public Region[] Regions { get => _regions; }
+		private readonly List<Region> _regions;
+		public List<Region> Regions { get => _regions; }
 
-        private (int X, int Y) _location = (0, 0); 
-        public (int X, int Y) Location { get => _location; }
+		private readonly List<Puzzle> _subPuzzles;
+		public List<Puzzle> SubPuzzles { get => _subPuzzles; }
+
+		private (int X, int Y) _location = (0, 0);
+		public (int X, int Y) Location { get => _location; }
 
 
-		public Puzzle(Row[] rows, Column[] columns, Region[] regions)
+		public Puzzle(List<Row> rows, List<Column> columns, List<Region> regions, List<Puzzle> subPuzzles = null)
 		{
 			_rows = rows;
 			_columns = columns;
 			_regions = regions;
+			_subPuzzles = subPuzzles;
 		}
 
 		public void TryMove(Direction direction)
-        {
+		{
 			int nextX = _location.X;
 			int nextY = _location.Y;
 
@@ -49,10 +53,10 @@ namespace sudoku.Game
 					break;
 			}
 			// loop back to other side
-			if (nextX == _columns.Length) nextX = 0;
-			if (nextX == -1) nextX = _columns.Length - 1;
-			if (nextY == _rows.Length) nextY = 0;
-			if (nextY == -1) nextY = _rows.Length - 1;
+			if (nextX == _columns.Count) nextX = 0;
+			if (nextX == -1) nextX = _columns.Count - 1;
+			if (nextY == _rows.Count) nextY = 0;
+			if (nextY == -1) nextY = _rows.Count - 1;
 
 			_location.X = nextX;
 			_location.Y = nextY;
@@ -64,16 +68,29 @@ namespace sudoku.Game
 			}
 		}
 
-        public void ChangeCellValue(int number)
-        {
+		public void ChangeCellValue(int number)
+		{
 			if (_rows[_location.Y].Cells[_location.X].Number == number)
-            {
+			{
 				_rows[_location.Y].Cells[_location.X].Number = 0;
 			}
 			else
-            {
+			{
 				_rows[_location.Y].Cells[_location.X].Number = number;
-            }
-        }
-    }
+			}
+		}
+
+		public (int, int)? FirstEmptyCellLocation()
+		{
+			for (int y = 0; y < _rows.Count; y++)
+			{
+				for (int x = 0; x < _rows[0].Cells.Count; x++)
+				{
+					Cell cell = _rows[y].Cells[x];
+					if (cell.Number == 0 && cell.IsActive) return (x, y);
+				}
+			}
+			return null;
+		}
+	}
 }

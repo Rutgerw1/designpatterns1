@@ -8,7 +8,7 @@ namespace sudoku.Game
 {
 	public class Region : Group
 	{
-		public Region(Cell[] cells) : base(cells)
+		public Region(List<Cell> cells) : base(cells)
 		{
 			foreach(Cell cell in Cells)
 			{

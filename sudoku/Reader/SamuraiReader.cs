@@ -12,53 +12,53 @@ namespace sudoku.Reader
 		public Puzzle CreatePuzzle(string file)
 		{
 			string[] puzzleStrings = file.Split(new string[] { "\r\n" }, StringSplitOptions.None);
-			ClassicReader classicReader = new ClassicReader();
-			Puzzle[] subPuzzles = new Puzzle[5];
+			ISudokuReader classicReader = new ClassicReader();
+			List<Puzzle> subPuzzles = new List<Puzzle>();
 
-			for (int i = 0; i < subPuzzles.Length; i++)
+			foreach(String puzzleString in puzzleStrings)
 			{
-				subPuzzles[i] = classicReader.CreatePuzzle(puzzleStrings[i]);
+				subPuzzles.Add(classicReader.CreatePuzzle(puzzleString));
 			}
 
-			Cell[] cellArray = new Cell[0];
+			List<Cell> cellList = new List<Cell>();
 
 			for (int row = 0; row < 21; row++)
 			{
 				if (row < 6)
 				{
-					cellArray = cellArray.Concat(subPuzzles[0].Rows[row].Cells).ToArray();
-					cellArray = cellArray.Concat(GenerateInactiveCells()).ToArray();
-					cellArray = cellArray.Concat(subPuzzles[1].Rows[row].Cells).ToArray();
+					cellList = cellList.Concat(subPuzzles[0].Rows[row].Cells).ToList();
+					cellList = cellList.Concat(GenerateInactiveCells()).ToList();
+					cellList = cellList.Concat(subPuzzles[1].Rows[row].Cells).ToList();
 				}
 				else if (row < 9)
 				{
-					cellArray = cellArray.Concat(subPuzzles[0].Rows[row].Cells).ToArray();
-					cellArray = cellArray.Concat(new ArraySegment<Cell>(subPuzzles[2].Rows[row - 6].Cells, 3, 3)).ToArray();
-					cellArray = cellArray.Concat(subPuzzles[1].Rows[row].Cells).ToArray();
+					cellList = cellList.Concat(subPuzzles[0].Rows[row].Cells).ToList();
+					cellList = cellList.Concat(subPuzzles[2].Rows[row - 6].Cells.GetRange(3, 3)).ToList();
+					cellList = cellList.Concat(subPuzzles[1].Rows[row].Cells).ToList();
 				}
 				else if (row < 12)
 				{
-					cellArray = cellArray.Concat(GenerateInactiveCells()).ToArray();
-					cellArray = cellArray.Concat(GenerateInactiveCells()).ToArray();
-					cellArray = cellArray.Concat(subPuzzles[2].Rows[row - 6].Cells).ToArray();
-					cellArray = cellArray.Concat(GenerateInactiveCells()).ToArray();
-					cellArray = cellArray.Concat(GenerateInactiveCells()).ToArray();
+					cellList = cellList.Concat(GenerateInactiveCells()).ToList();
+					cellList = cellList.Concat(GenerateInactiveCells()).ToList();
+					cellList = cellList.Concat(subPuzzles[2].Rows[row - 6].Cells).ToList();
+					cellList = cellList.Concat(GenerateInactiveCells()).ToList();
+					cellList = cellList.Concat(GenerateInactiveCells()).ToList();
 				}
 				else if (row < 15)
 				{
-					cellArray = cellArray.Concat(subPuzzles[3].Rows[row - 12].Cells).ToArray();
-					cellArray = cellArray.Concat(new ArraySegment<Cell>(subPuzzles[2].Rows[row - 6].Cells, 3, 3)).ToArray();
-					cellArray = cellArray.Concat(subPuzzles[4].Rows[row - 12].Cells).ToArray();
+					cellList = cellList.Concat(subPuzzles[3].Rows[row - 12].Cells).ToList();
+					cellList = cellList.Concat(subPuzzles[2].Rows[row - 6].Cells.GetRange(3, 3)).ToList();
+					cellList = cellList.Concat(subPuzzles[4].Rows[row - 12].Cells).ToList();
 				}
 				else
 				{
-					cellArray = cellArray.Concat(subPuzzles[3].Rows[row - 12].Cells).ToArray();
-					cellArray = cellArray.Concat(GenerateInactiveCells()).ToArray();
-					cellArray = cellArray.Concat(subPuzzles[4].Rows[row - 12].Cells).ToArray();
+					cellList = cellList.Concat(subPuzzles[3].Rows[row - 12].Cells).ToList();
+					cellList = cellList.Concat(GenerateInactiveCells()).ToList();
+					cellList = cellList.Concat(subPuzzles[4].Rows[row - 12].Cells).ToList();
 				}
 			}
 
-			int groupLength = (int)Math.Sqrt(cellArray.Length);
+			int groupLength = (int)Math.Sqrt(cellList.Count);
 
 			Row[] rows = new Row[groupLength];
 			Column[] columns = new Column[groupLength];
@@ -73,55 +73,55 @@ namespace sudoku.Reader
 					int rowIndex = x + (y * groupLength);
 					int columnIndex = y + (x * groupLength);
 
-					row[x] = cellArray[rowIndex];
-					column[x] = cellArray[columnIndex];
+					row[x] = cellList[rowIndex];
+					column[x] = cellList[columnIndex];
 				}
 
-				rows[y] = new Row(row);
-				columns[y] = new Column(column);
+				rows[y] = new Row(row.ToList());
+				columns[y] = new Column(column.ToList());
 			}
 
-			Region[] regions = new Region[0];
+			List<Region> regions = new List<Region>();
 			for (int i = 0; i < 41; i++)
 			{
 				if (i < 12)
 				{
-					regions = regions.Concat(new ArraySegment<Region>(subPuzzles[0].Regions, 0, 3)).ToArray();
-					regions = regions.Concat(new ArraySegment<Region>(subPuzzles[1].Regions, 0, 3)).ToArray();
-					regions = regions.Concat(new ArraySegment<Region>(subPuzzles[0].Regions, 3, 3)).ToArray();
-					regions = regions.Concat(new ArraySegment<Region>(subPuzzles[1].Regions, 3, 3)).ToArray();
+					regions = regions.Concat(subPuzzles[0].Regions.GetRange(0, 3)).ToList();
+					regions = regions.Concat(subPuzzles[1].Regions.GetRange(0, 3)).ToList();
+					regions = regions.Concat(subPuzzles[0].Regions.GetRange(3, 3)).ToList();
+					regions = regions.Concat(subPuzzles[1].Regions.GetRange(3, 3)).ToList();
 				}
 				else if (i < 19)
 				{
-					regions = regions.Concat(new ArraySegment<Region>(subPuzzles[0].Regions, 6, 3)).ToArray();
-					regions = regions.Concat(new ArraySegment<Region>(subPuzzles[2].Regions, 1, 1)).ToArray();
-					regions = regions.Concat(new ArraySegment<Region>(subPuzzles[1].Regions, 6, 3)).ToArray();
+					regions = regions.Concat(subPuzzles[0].Regions.GetRange(6, 3)).ToList();
+					regions = regions.Concat(subPuzzles[2].Regions.GetRange(1, 1)).ToList();
+					regions = regions.Concat(subPuzzles[1].Regions.GetRange(6, 3)).ToList();
 				}
 				else if (i < 22)
 				{
-					regions = regions.Concat(new ArraySegment<Region>(subPuzzles[2].Regions, 3, 3)).ToArray();
+					regions = regions.Concat(subPuzzles[2].Regions.GetRange(3, 3)).ToList();
 				}
 				else if (i < 29)
 				{
-					regions = regions.Concat(new ArraySegment<Region>(subPuzzles[3].Regions, 0, 3)).ToArray();
-					regions = regions.Concat(new ArraySegment<Region>(subPuzzles[2].Regions, 8, 1)).ToArray();
-					regions = regions.Concat(new ArraySegment<Region>(subPuzzles[4].Regions, 0, 3)).ToArray();
+					regions = regions.Concat(subPuzzles[3].Regions.GetRange(0, 3)).ToList();
+					regions = regions.Concat(subPuzzles[2].Regions.GetRange(8, 1)).ToList();
+					regions = regions.Concat(subPuzzles[4].Regions.GetRange(0, 3)).ToList();
 				}
 				else
 				{
-					regions = regions.Concat(new ArraySegment<Region>(subPuzzles[3].Regions, 3, 3)).ToArray();
-					regions = regions.Concat(new ArraySegment<Region>(subPuzzles[4].Regions, 3, 3)).ToArray();
-					regions = regions.Concat(new ArraySegment<Region>(subPuzzles[3].Regions, 6, 3)).ToArray();
-					regions = regions.Concat(new ArraySegment<Region>(subPuzzles[4].Regions, 6, 3)).ToArray();
+					regions = regions.Concat(subPuzzles[3].Regions.GetRange(3, 3)).ToList();
+					regions = regions.Concat(subPuzzles[4].Regions.GetRange(3, 3)).ToList();
+					regions = regions.Concat(subPuzzles[3].Regions.GetRange(6, 3)).ToList();
+					regions = regions.Concat(subPuzzles[4].Regions.GetRange(6, 3)).ToList();
 				}
 			}
 
-			return new Puzzle(rows, columns, regions);
+			return new Puzzle(rows.ToList(), columns.ToList(), regions, subPuzzles);
 		}
 
-		public Cell[] GenerateInactiveCells()
+		public List<Cell> GenerateInactiveCells()
 		{
-			return new Cell[] { new Cell(0, false), new Cell(0, false), new Cell(0, false) };
+			return new List<Cell> { new Cell(0, false), new Cell(0, false), new Cell(0, false) };
 		}
 	}
 }
