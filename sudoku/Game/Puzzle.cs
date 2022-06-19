@@ -23,6 +23,8 @@ namespace sudoku.Game
 		private (int X, int Y) _location = (0, 0);
 		public (int X, int Y) Location { get => _location; }
 
+        private bool _notesMode;
+		public bool NotesMode { get => _notesMode; }
 
 		public Puzzle(List<Row> rows, List<Column> columns, List<Region> regions, List<Puzzle> subPuzzles = null)
 		{
@@ -30,6 +32,7 @@ namespace sudoku.Game
 			_columns = columns;
 			_regions = regions;
 			_subPuzzles = subPuzzles;
+			_notesMode = false;
 		}
 
 		public void TryMove(Direction direction)
@@ -70,14 +73,32 @@ namespace sudoku.Game
 
 		public void ChangeCellValue(int number)
 		{
-			if (_rows[_location.Y].Cells[_location.X].Number == number)
+			if (number <= _rows.Count)
 			{
-				_rows[_location.Y].Cells[_location.X].Number = 0;
+				if (_notesMode)
+				{
+					if (_rows[_location.Y].Cells[_location.X].Notes.Contains(number))
+					{
+						_rows[_location.Y].Cells[_location.X].Notes.Remove(number);
+					}
+					else
+					{
+						_rows[_location.Y].Cells[_location.X].Notes.Add(number);
+					}
+				}
+				else
+				{
+					if (_rows[_location.Y].Cells[_location.X].Number == number)
+					{
+						_rows[_location.Y].Cells[_location.X].Number = 0;
+					}
+					else
+					{
+						_rows[_location.Y].Cells[_location.X].Number = number;
+					}
+				}
 			}
-			else
-			{
-				_rows[_location.Y].Cells[_location.X].Number = number;
-			}
+			
 		}
 
 		public (int, int)? FirstEmptyCellLocation()
@@ -92,5 +113,10 @@ namespace sudoku.Game
 			}
 			return null;
 		}
+
+		public void ToggleNotesMode()
+        {
+			_notesMode = !_notesMode;
+        }
 	}
 }

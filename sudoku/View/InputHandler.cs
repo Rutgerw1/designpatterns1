@@ -38,6 +38,8 @@ namespace sudoku.View
 				try
 				{
 					reader = factory.GetReader(ext);
+					string file = File.ReadAllText(path);
+					_puzzle = reader.CreatePuzzle(file);
 				}
 				catch (KeyNotFoundException)
 				{
@@ -46,9 +48,6 @@ namespace sudoku.View
 					_mainView.PrintInvalidFile(typesString);
 					this.StartGame();
 				}
-
-				string file = File.ReadAllText(path);
-				_puzzle = reader.CreatePuzzle(file);
 			}
 
 			return _puzzle;
@@ -57,8 +56,16 @@ namespace sudoku.View
 		public void PlayGame(Puzzle puzzle)
 		{
 			GameView gameView = new GameView(puzzle);
+			NotesView notesView = new NotesView(puzzle);
 			bool quitGame = false;
-			gameView.PrintGame();
+			if (_puzzle.NotesMode)
+			{
+				notesView.PrintGame();
+			}
+			else
+            {
+				gameView.PrintGame();
+            }
 
 			while (!quitGame)
 			{
@@ -87,7 +94,15 @@ namespace sudoku.View
 						puzzle.ChangeCellValue(0);
 						break;
 					case ConsoleKey.Spacebar:
-						//switch editor modes;
+						puzzle.ToggleNotesMode();
+						if (_puzzle.NotesMode)
+						{
+							notesView.PrintGame();
+						}
+						else
+                        {
+							gameView.PrintGame();
+                        }
 						break;
 					case ConsoleKey.C:
 						//check
@@ -104,7 +119,16 @@ namespace sudoku.View
 						break;
 				}
 				redrawLocations[1] = (_puzzle.Location.X, _puzzle.Location.Y);
-				gameView.RePrintCells(redrawLocations);
+				if (_puzzle.NotesMode)
+				{
+					notesView.RePrintCells(redrawLocations);
+					//notesView.PrintGame();
+				}
+				else
+				{
+					gameView.RePrintCells(redrawLocations);
+				}
+				
 			}
 		}
 	}

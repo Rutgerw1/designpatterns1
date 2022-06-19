@@ -24,6 +24,7 @@ namespace sudoku.Game
 		{
 			_number = number;
 			_isActive = active;
+			_notes = new List<int>();
 		}
 
 		public override string ToString()

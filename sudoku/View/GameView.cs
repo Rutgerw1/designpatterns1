@@ -36,7 +36,7 @@ namespace sudoku.View
 			PrintInstructions();
 		}
 
-		private void PrintInstructions()
+		private void PrintInstructions() //TODO extract method to shared class
 		{
 			Console.SetCursorPosition(_puzzle.Columns.Count * 4 + 2, _puzzle.Rows.Count - 2);
 			PrintMessage("  Quit game: ");
@@ -57,6 +57,8 @@ namespace sudoku.View
 			Console.SetCursorPosition(_puzzle.Columns.Count * 4 + 2, _puzzle.Rows.Count + 2);
 			PrintMessage("  Solve: ");
 			PrintMessage("S", ConsoleColor.Magenta);
+
+			Console.ForegroundColor = ConsoleColor.Black;		
 		}
 
 		public void PrintRow(Row row, int currentRow)
