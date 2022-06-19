@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace sudoku.Game
 {
-	public class Cell
+	public class Cell : ICell
 	{
 		private int _number;
 		public int Number { get => _number; set => _number = value; }

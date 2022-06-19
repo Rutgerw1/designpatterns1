@@ -19,7 +19,6 @@ namespace sudoku.Reader
 			{
 				{ "4x4", () => new ClassicReader() },
 				{ "6x6", () => new ClassicReader() },
-				{ "8x8", () => new ClassicReader() },
 				{ "9x9", () => new ClassicReader() },
 				{ "jigsaw", () => new JigsawReader() },
 				{ "samurai", () => new SamuraiReader() }

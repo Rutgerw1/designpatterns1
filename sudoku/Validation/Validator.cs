@@ -45,6 +45,7 @@ namespace sudoku.Validation
 			{
 				return ValidateSamurai(puzzle, newCell, location);
 			}
+
 			bool validInRow = CellValid(puzzle.Rows[location.Y], newCell);
 			bool validInColumn = CellValid(puzzle.Columns[location.X], newCell);
 			bool validInRegion = CellValid(newCell.Region, newCell);
@@ -106,7 +107,7 @@ namespace sudoku.Validation
 			return validInRow1 && validInColumn1 && validInRow2 && validInColumn2 && validInRegion;
 		}
 
-		private bool CellValid(IValidationGroup group, Cell targetCell)
+		private bool CellValid(Group group, Cell targetCell)
 		{
 			int conflicts = 0; 
 			group.Cells.ForEach(cell => conflicts += ConflictsWith(cell, targetCell) ? 1 : 0);
