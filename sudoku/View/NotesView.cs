@@ -14,7 +14,6 @@ namespace sudoku.View
         private readonly int _reprintFactorY;
 		private readonly int _sqrt;
 		private readonly int _sqrtCeiling;
-        private int _notesCounter;
 
 		public NotesView(Puzzle puzzle)
         {
@@ -22,15 +21,15 @@ namespace sudoku.View
 			_reprintFactorY = 4;
 			if(puzzle.SubPuzzles != null)
             {
-				_sqrt = (int)Math.Sqrt(_puzzle.SubPuzzles[0].Rows[0].Cells.Count);
-				_sqrtCeiling = (int)Math.Ceiling(Math.Sqrt(_puzzle.SubPuzzles[0].Rows[0].Cells.Count));
+				_sqrt = (int)Math.Sqrt(_puzzle.SubPuzzles[0].Rows.Count);
+				_sqrtCeiling = (int)Math.Ceiling(Math.Sqrt(_puzzle.SubPuzzles[0].Rows.Count));
 			}
 			else
             {
-				_sqrt = (int)Math.Sqrt(_puzzle.Rows[0].Cells.Count);
-				_sqrtCeiling = (int)Math.Ceiling(Math.Sqrt(_puzzle.Rows[0].Cells.Count));
+				_sqrt = (int)Math.Sqrt(_puzzle.Rows.Count);
+				_sqrtCeiling = (int)Math.Ceiling(Math.Sqrt(_puzzle.Rows.Count));
 			}
-			if (PuzzleLengthDivisibleBy2())
+			if (_sqrtCeiling % 2 == 0)
 			{
 				_reprintFactorX = 5;
 			}
@@ -59,7 +58,7 @@ namespace sudoku.View
 			PrintInstructions();
 		}
 
-		private void PrintInstructions() //TODO extract method to shared class
+		private void PrintInstructions()
 		{
             Console.SetCursorPosition(_puzzle.Columns.Count / 2, _puzzle.Rows.Count * 5 - 2);
             PrintMessage("  Quit game: ");
@@ -84,12 +83,13 @@ namespace sudoku.View
 
 		public void PrintRow(Group row, int currentRow)
 		{
+			
 			PrintRowSeparator(row.Cells.Count, _puzzle.Rows.IndexOf(row));
 			for (int consoleRowAmount = 0; consoleRowAmount < _sqrt; consoleRowAmount++)
 			{
-				SetNotesFromLine(consoleRowAmount); //Is dit clean? Denk het niet maar wat is het alternatief? Kent variabele niet overal in deze for loops
 				for (int i = 0; i < row.Cells.Count; i++)
 				{
+					int notesCounter = SetNotesFromLine(consoleRowAmount);
 					Cell previousCell = i > 0 ? row.Cells[i - 1] : null;
 					Cell currentCell = row.Cells[i];
 					ConsoleColor color = ConsoleColor.White;
@@ -119,7 +119,7 @@ namespace sudoku.View
                         {
 							if(consoleRowAmount == 1)
                             {
-								if(PuzzleLengthDivisibleBy2())
+								if(_sqrtCeiling % 2 == 0)
                                 {
 									PrintMessage(" " + currentCell.ToString(), backgroundColor: bgColor);
                                 }
@@ -130,7 +130,7 @@ namespace sudoku.View
                             }
 							else
                             {
-								if (PuzzleLengthDivisibleBy2())
+								if (_sqrtCeiling % 2 == 0)
 								{
 									PrintMessage("  ", backgroundColor: bgColor);
 								}
@@ -142,28 +142,22 @@ namespace sudoku.View
 							}
 							break;
 						}
-						else if (currentCell.Notes.Contains(_notesCounter))
+						else if (currentCell.Notes.Contains(notesCounter))
 						{
-							PrintMessage(_notesCounter.ToString(), backgroundColor: bgColor);
+							PrintMessage(notesCounter.ToString(), backgroundColor: bgColor);
 						}
 						else
 						{
 							PrintMessage(" ", backgroundColor: bgColor);
 						}
-						_notesCounter++;
+						notesCounter++;
 					}
-					SetNotesFromLine(consoleRowAmount);
 					if (i == row.Cells.Count - 1)
 					{
 						PrintMessage(printCellSeparator ? " |\n" : "  \n");
 					}
 				}
 			}
-		}
-
-		private bool PuzzleLengthDivisibleBy2()
-        {
-			return _sqrtCeiling % 2 == 0;
 		}
 
 		private void PrintRowSeparator(int length, int rowNumber)
@@ -212,22 +206,20 @@ namespace sudoku.View
 			}
 		}
 
-		private void SetNotesFromLine(int consoleRow)
+		private int SetNotesFromLine(int consoleRow)
         {
 			for (int i = 1; i < 4; i++)
 			{
 				if (consoleRow == 0)
 				{
-					_notesCounter = 1;
+					return 1;
 				}
-				else
+				else if (consoleRow == i)
 				{
-					if (consoleRow == i)
-					{
-						_notesCounter = (int)Math.Ceiling(Math.Sqrt(_puzzle.Rows[0].Cells.Count) * i + 1);
-					}
+					return (int)Math.Ceiling(Math.Sqrt(_puzzle.Rows[0].Cells.Count) * i + 1);
 				}
 			}
+			return 0;
 		}
 
         internal void RePrintCells(List<(int X, int Y)> locations)
@@ -250,8 +242,8 @@ namespace sudoku.View
 
 		private void PrintBigCell(int X, int Y, Cell cell, ConsoleColor bgColor = ConsoleColor.Black)
         {
-			SetNotesFromLine(0);
-            for (int i = 0; i < _sqrt; i++)
+			int notesCounter = SetNotesFromLine(0);
+			for (int i = 0; i < _sqrt; i++)
             {
 				Console.CursorTop = Y * ((int)Math.Sqrt(_puzzle.Rows[0].Cells.Count) + 1) + 1 + i;
                 for (int j = 0; j < _sqrtCeiling; j++)
@@ -260,7 +252,7 @@ namespace sudoku.View
 					{
 						if (i == 1)
 						{
-							if (PuzzleLengthDivisibleBy2())
+							if (_sqrtCeiling % 2 == 0)
 							{
 								PrintMessage(" " + cell.ToString(), backgroundColor: bgColor);
 							}
@@ -272,7 +264,7 @@ namespace sudoku.View
 						}
 						else
 						{
-							if (PuzzleLengthDivisibleBy2())
+							if (_sqrtCeiling % 2 == 0)
 							{
 								PrintMessage("  ", backgroundColor: bgColor);
 							}
@@ -283,15 +275,15 @@ namespace sudoku.View
 						}
 						break;
 					}
-					else if (cell.Notes.Contains(_notesCounter))
+					else if (cell.Notes.Contains(notesCounter))
 					{
-						PrintMessage(_notesCounter.ToString(), backgroundColor: bgColor);
+						PrintMessage(notesCounter.ToString(), backgroundColor: bgColor);
 					}
 					else
 					{
 						PrintMessage(" ", backgroundColor: bgColor);
 					}
-					_notesCounter++;
+					notesCounter++;
 				}
 				Console.BackgroundColor = ConsoleColor.Black;
 				Console.CursorLeft = X * _reprintFactorX + 3;

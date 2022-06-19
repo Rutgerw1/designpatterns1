@@ -36,7 +36,7 @@ namespace sudoku.View
 			PrintInstructions();
 		}
 
-		private void PrintInstructions() //TODO extract method to shared class
+		private void PrintInstructions()
 		{
 			Console.SetCursorPosition(_puzzle.Columns.Count * 4 + 2, _puzzle.Rows.Count - 2);
 			PrintMessage("  Quit game: ");

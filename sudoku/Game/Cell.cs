@@ -34,9 +34,9 @@ namespace sudoku.Game
 			_notes = new List<int>();
 		}
 
-		public override string ToString()
-		{
-			return _number != 0 ? _number.ToString() : " ";
-		}
-	}
+        public override string ToString()
+        {
+            return _number != 0 ? _number.ToString() : " ";
+        }
+    }
 }
