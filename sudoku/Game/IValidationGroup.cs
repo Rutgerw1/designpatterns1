@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace sudoku.Game
 {
-	public class Column : Group
+	public interface IValidationGroup
 	{
-		public Column(List<Cell> cells) : base(cells)
-		{
-		}
+		List<Cell> Cells { get; }
 	}
 }

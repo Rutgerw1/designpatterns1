@@ -82,7 +82,7 @@ namespace sudoku.View
             PrintMessage("S", ConsoleColor.Magenta);
         }
 
-		public void PrintRow(Row row, int currentRow)
+		public void PrintRow(Group row, int currentRow)
 		{
 			PrintRowSeparator(row.Cells.Count, _puzzle.Rows.IndexOf(row));
 			for (int consoleRowAmount = 0; consoleRowAmount < _sqrt; consoleRowAmount++)
@@ -230,7 +230,7 @@ namespace sudoku.View
 			}
 		}
 
-        internal void RePrintCells((int X, int Y)[] locations)
+        internal void RePrintCells(List<(int X, int Y)> locations)
         {
 			foreach ((int X, int Y) in locations)
 			{

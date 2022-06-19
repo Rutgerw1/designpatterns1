@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace sudoku.Game
 {
-    public abstract class Group
+    public class Group : IValidationGroup
     {
         private readonly List<Cell> _cells;
 		public List<Cell> Cells { get => _cells; }

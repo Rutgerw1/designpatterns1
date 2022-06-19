@@ -1,4 +1,5 @@
 ﻿using sudoku.Game;
+using sudoku.Validation;
 using sudoku.View;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,6 @@ namespace sudoku.SolvingAlgorithm
 {
     interface ISolvingAlgorithm
     {
-        bool Solve(Puzzle puzzle,bool  persist = true);
+        bool Solve(Puzzle puzzle, IValidator validator);
     }
 }

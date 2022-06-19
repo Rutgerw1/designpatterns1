@@ -61,7 +61,7 @@ namespace sudoku.View
 			Console.ForegroundColor = ConsoleColor.Black;		
 		}
 
-		public void PrintRow(Row row, int currentRow)
+		public void PrintRow(Group row, int currentRow)
 		{
 			PrintRowSeparator(row.Cells.Count, _puzzle.Rows.IndexOf(row));
 			for (int i = 0; i < row.Cells.Count; i++)
@@ -82,6 +82,10 @@ namespace sudoku.View
 				PrintMessage(printCellSeparator ? " | " : "   ", color);
 
 				ConsoleColor bgColor = ConsoleColor.Black;
+				if (currentCell.Conflicts.Count > 0 || currentCell.OutOfBounds)
+				{
+					bgColor = ConsoleColor.Red;
+				}
 				if (_puzzle.Location.Y == currentRow && _puzzle.Location.X == i)
 				{
 					bgColor = ConsoleColor.DarkYellow;
@@ -92,6 +96,38 @@ namespace sudoku.View
 					PrintMessage(printCellSeparator ? " |\n" : "  \n");
 				}
 			}
+		}
+
+		internal void ClearErrorMessage()
+		{
+			Console.SetCursorPosition(3, _puzzle.Rows.Count * 2 + 2);
+			PrintMessage(new string(' ', Console.BufferWidth));
+			Console.SetCursorPosition(3, _puzzle.Rows.Count * 2 + 2);
+		}
+
+		internal void PrintErrorsPresent()
+		{
+			ClearErrorMessage();
+			PrintMessage("Errors are present, highlighted in red.");
+		}
+
+		internal void PrintNoErrorsPresent()
+		{
+			ClearErrorMessage();
+			PrintMessage("Currently no errors in puzzle.");
+		}
+
+		internal void PrintFinish()
+		{
+			ClearErrorMessage();
+			PrintMessage("Game over. Thanks for playing!");
+			Console.ReadKey(true);
+		}
+
+		internal void PrintUnsolvable()
+		{
+			ClearErrorMessage();
+			PrintMessage("The current state of this puzzle is unsolvable, but there are no immediate conflicts.");
 		}
 
 		private void PrintRowSeparator(int length, int rowNumber)
@@ -140,20 +176,27 @@ namespace sudoku.View
 			}
 		}
 
-		internal void RePrintCells((int X, int Y)[] locations)
+		internal void RePrintCells(List<(int X, int Y)> locations)
 		{
 			foreach ((int X, int Y) in locations)
 			{
 				Console.CursorTop = Y * 2 + 1;
 				Console.CursorLeft = X * 4 + 3;
+
+				Cell cell = _puzzle.Rows[Y].Cells[X];
 				if (_puzzle.Location.Y == Y && _puzzle.Location.X == X)
 				{
-					PrintMessage(_puzzle.Rows[Y].Cells[X].ToString(), backgroundColor: ConsoleColor.DarkYellow);
+					PrintMessage(cell.ToString(), backgroundColor: ConsoleColor.DarkYellow);
+				}
+				else if (cell.Conflicts.Count > 0 || cell.OutOfBounds)
+				{
+					PrintMessage(cell.ToString(), backgroundColor: ConsoleColor.Red);
 				}
 				else
 				{
-					PrintMessage(_puzzle.Rows[Y].Cells[X].ToString());
+					PrintMessage(cell.ToString());
 				}
+				Console.BackgroundColor = ConsoleColor.Black;
 				Console.CursorLeft--;
 			}
 		}

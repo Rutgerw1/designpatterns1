@@ -15,10 +15,18 @@ namespace sudoku.Reader
 			ISudokuReader classicReader = new ClassicReader();
 			List<Puzzle> subPuzzles = new List<Puzzle>();
 
-			foreach(String puzzleString in puzzleStrings)
+			for (int i = 0; i < puzzleStrings.Length; i++)
 			{
-				subPuzzles.Add(classicReader.CreatePuzzle(puzzleString));
+				if (i != 2)
+				{
+					subPuzzles.Add(classicReader.CreatePuzzle(puzzleStrings[i]));
+				}
+				else
+				{ // to handle overlapping cells, we want to build up subPuzzles[2] manually
+					subPuzzles.Add(null);
+				}
 			}
+			subPuzzles[2] = BuildCentralPuzzle(subPuzzles, puzzleStrings[2]);
 
 			List<Cell> cellList = new List<Cell>();
 
@@ -60,8 +68,8 @@ namespace sudoku.Reader
 
 			int groupLength = (int)Math.Sqrt(cellList.Count);
 
-			Row[] rows = new Row[groupLength];
-			Column[] columns = new Column[groupLength];
+			Group[] rows = new Group[groupLength];
+			Group[] columns = new Group[groupLength];
 
 			for (int y = 0; y < groupLength; y++)
 			{
@@ -77,8 +85,8 @@ namespace sudoku.Reader
 					column[x] = cellList[columnIndex];
 				}
 
-				rows[y] = new Row(row.ToList());
-				columns[y] = new Column(column.ToList());
+				rows[y] = new Group(row.ToList());
+				columns[y] = new Group(column.ToList());
 			}
 
 			List<Region> regions = new List<Region>();
@@ -117,6 +125,67 @@ namespace sudoku.Reader
 			}
 
 			return new Puzzle(rows.ToList(), columns.ToList(), regions, subPuzzles);
+		}
+
+		private Puzzle BuildCentralPuzzle(List<Puzzle> subPuzzles, string puzzleString)
+		{
+			List<Cell> cellsList = new List<Cell>();
+
+			for (int i = 0; i < 9; i++)
+			{
+				if (i < 3)
+				{
+					cellsList.AddRange(subPuzzles[0].Rows[i + 6].Cells.GetRange(6, 3));
+					puzzleString.Substring(i * 9 + 3, 3).ToCharArray().ToList().ForEach(c => cellsList.Add(new Cell((int)char.GetNumericValue(c))));
+					cellsList.AddRange(subPuzzles[1].Rows[i + 6].Cells.GetRange(0, 3));
+				}
+				else if (i < 6)
+				{
+					puzzleString.Substring(i * 9, 9).ToCharArray().ToList().ForEach(c => cellsList.Add(new Cell((int)char.GetNumericValue(c))));
+				}
+				else
+				{
+					cellsList.AddRange(subPuzzles[3].Rows[i - 6].Cells.GetRange(6, 3));
+					puzzleString.Substring(i * 9 + 3, 3).ToCharArray().ToList().ForEach(c => cellsList.Add(new Cell((int)char.GetNumericValue(c))));
+					cellsList.AddRange(subPuzzles[4].Rows[i - 6].Cells.GetRange(0, 3));
+				}
+			}
+
+			int groupLength = (int)Math.Sqrt(cellsList.Count);
+
+			Group[] rows = new Group[groupLength];
+			Group[] columns = new Group[groupLength];
+			Region[] regions = new Region[groupLength];
+
+			int sqrtFloor = (int)Math.Sqrt(groupLength);
+			int sqrtInverse = groupLength / sqrtFloor;
+
+			for (int y = 0; y < groupLength; y++)
+			{
+				Cell[] row = new Cell[groupLength];
+				Cell[] column = new Cell[groupLength];
+				Cell[] region = new Cell[groupLength];
+
+				for (int x = 0; x < groupLength; x++)
+				{
+					int rowIndex = x + (y * groupLength);
+					int columnIndex = y + (x * groupLength);
+					int regionIndex =
+						x % sqrtInverse +
+						y * sqrtInverse +
+						groupLength * (int)(x / sqrtInverse + y / sqrtFloor * (sqrtFloor - 1));
+
+					row[x] = cellsList[rowIndex];
+					column[x] = cellsList[columnIndex];
+					region[x] = cellsList[regionIndex];
+				}
+
+				rows[y] = new Group(row.ToList());
+				columns[y] = new Group(column.ToList());
+				regions[y] = new Region(region.ToList());
+			}
+
+			return new Puzzle(rows.ToList(), columns.ToList(), regions.ToList());
 		}
 
 		public List<Cell> GenerateInactiveCells()
