@@ -1,6 +1,7 @@
 ﻿using sudoku.Game;
 using sudoku.Reader;
 using sudoku.SolvingAlgorithm;
+using sudoku.Validation;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -62,9 +63,12 @@ namespace sudoku.View
 
 			while (!quitGame)
 			{
-				ConsoleKeyInfo input = Console.ReadKey();
-				(int X, int Y)[] redrawLocations = new (int X, int Y)[2];
-				redrawLocations[0] = (_puzzle.Location.X, _puzzle.Location.Y);
+				ConsoleKeyInfo input = Console.ReadKey(true);
+				List<(int X, int Y)> redrawLocations = new List<(int X, int Y)>();
+				redrawLocations.Add((_puzzle.Location.X, _puzzle.Location.Y));
+
+				IValidator validator = new Validator();
+
 				switch (input.Key)
 				{
 					case ConsoleKey.Escape:
@@ -84,28 +88,77 @@ namespace sudoku.View
 						break;
 					case ConsoleKey.Backspace:
 					case ConsoleKey.Delete:
-						puzzle.ChangeCellValue(0);
+						if (puzzle.ChangeCellValue(0))
+						{
+							Cell changedCell = puzzle.SelectedCell;
+							redrawLocations.AddRange(ClearErrors(changedCell, puzzle));
+						}
+						gameView.ClearErrorMessage();
 						break;
 					case ConsoleKey.Spacebar:
 						//switch editor modes;
 						break;
 					case ConsoleKey.C:
-						//check
+						List<(int X, int Y)> errors = validator.ValidateWhole(puzzle);
+						if (errors.Count > 0)
+						{
+							gameView.PrintErrorsPresent();
+							redrawLocations.AddRange(errors);
+						} else
+						{
+							gameView.PrintNoErrorsPresent();
+						}
 						break;
 					case ConsoleKey.S:
-						_solver.Solve(puzzle);
-						gameView.PrintGame();
+						errors = validator.ValidateWhole(puzzle);
+						if (errors.Count == 0)
+						{
+							bool solved = _solver.Solve(puzzle, validator);
+							gameView.PrintGame();
+							if (!solved)
+							{
+								gameView.PrintUnsolvable();
+							}
+							else
+							{
+								quitGame = true;
+							}
+						}
+						else
+						{
+							gameView.PrintErrorsPresent();
+							redrawLocations.AddRange(errors);
+						}
 						break;
 					default:
 						if (char.IsDigit(input.KeyChar))
 						{
-							puzzle.ChangeCellValue(int.Parse(input.KeyChar.ToString()));
+							if (puzzle.ChangeCellValue(int.Parse(input.KeyChar.ToString())))
+							{
+								Cell changedCell = puzzle.SelectedCell;
+								redrawLocations.AddRange(ClearErrors(changedCell, puzzle));
+							}
+							gameView.ClearErrorMessage();
 						}
 						break;
 				}
-				redrawLocations[1] = (_puzzle.Location.X, _puzzle.Location.Y);
+				redrawLocations.Add((_puzzle.Location.X, _puzzle.Location.Y));
 				gameView.RePrintCells(redrawLocations);
 			}
+			gameView.PrintFinish();
+		}
+
+		private List<(int X, int Y)> ClearErrors(Cell changedCell, Puzzle puzzle)
+		{
+			List<(int X, int Y)> toClear = new List<(int X, int Y)>();
+			changedCell.OutOfBounds = false;
+			changedCell.Conflicts.ForEach(otherCell => otherCell.Conflicts.Remove(changedCell));
+			changedCell.Conflicts.ForEach(otherCell => toClear.Add(puzzle.GetCellLocation(otherCell).Value));
+			changedCell.Conflicts.Clear();
+
+			toClear.Add(puzzle.GetCellLocation(changedCell).Value);
+
+			return toClear;
 		}
 	}
 }

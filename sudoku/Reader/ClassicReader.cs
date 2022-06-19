@@ -22,8 +22,8 @@ namespace sudoku.Reader
 
 			int groupLength = (int)Math.Sqrt(file.Length);
 
-			Row[] rows = new Row[groupLength];
-			Column[] columns = new Column[groupLength];
+			Group[] rows = new Group[groupLength];
+			Group[] columns = new Group[groupLength];
 			Region[] regions = new Region[groupLength];
 
 			int sqrtFloor = (int)Math.Sqrt(groupLength);
@@ -49,8 +49,8 @@ namespace sudoku.Reader
 					region[x] = cellArray[regionIndex];
 				}
 
-				rows[y] = new Row(row.ToList());
-				columns[y] = new Column(column.ToList());
+				rows[y] = new Group(row.ToList());
+				columns[y] = new Group(column.ToList());
 				regions[y] = new Region(region.ToList());
 			}
 

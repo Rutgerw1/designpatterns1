@@ -8,11 +8,11 @@ namespace sudoku.Game
 {
 	public class Puzzle
 	{
-		private readonly List<Row> _rows;
-		public List<Row> Rows { get => _rows; }
+		private readonly List<Group> _rows;
+		public List<Group> Rows { get => _rows; }
 
-		private readonly List<Column> _columns;
-		public List<Column> Columns { get => _columns; }
+		private readonly List<Group> _columns;
+		public List<Group> Columns { get => _columns; }
 
 		private readonly List<Region> _regions;
 		public List<Region> Regions { get => _regions; }
@@ -22,9 +22,10 @@ namespace sudoku.Game
 
 		private (int X, int Y) _location = (0, 0);
 		public (int X, int Y) Location { get => _location; }
+		public Cell SelectedCell { get => _rows[_location.Y].Cells[_location.X]; }
 
 
-		public Puzzle(List<Row> rows, List<Column> columns, List<Region> regions, List<Puzzle> subPuzzles = null)
+		public Puzzle(List<Group> rows, List<Group> columns, List<Region> regions, List<Puzzle> subPuzzles = null)
 		{
 			_rows = rows;
 			_columns = columns;
@@ -68,16 +69,19 @@ namespace sudoku.Game
 			}
 		}
 
-		public void ChangeCellValue(int number)
+		public bool ChangeCellValue(int number)
 		{
-			if (_rows[_location.Y].Cells[_location.X].Number == number)
+			Cell cell = _rows[_location.Y].Cells[_location.X];
+			bool hadError = cell.Conflicts.Count > 0 || cell.OutOfBounds;
+			if (cell.Number == number)
 			{
-				_rows[_location.Y].Cells[_location.X].Number = 0;
+				cell.Number = 0;
 			}
 			else
 			{
-				_rows[_location.Y].Cells[_location.X].Number = number;
+				cell.Number = number;
 			}
+			return hadError;
 		}
 
 		public (int, int)? FirstEmptyCellLocation()
@@ -88,6 +92,18 @@ namespace sudoku.Game
 				{
 					Cell cell = _rows[y].Cells[x];
 					if (cell.Number == 0 && cell.IsActive) return (x, y);
+				}
+			}
+			return null;
+		}
+
+		public (int, int)? GetCellLocation(Cell cell)
+		{
+			for (int y = 0; y < _rows.Count; y++)
+			{
+				for (int x = 0; x < _rows[0].Cells.Count; x++)
+				{
+					if (cell == _rows[y].Cells[x]) return (x, y);
 				}
 			}
 			return null;
