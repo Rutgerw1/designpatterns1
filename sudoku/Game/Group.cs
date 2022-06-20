@@ -19,7 +19,7 @@ namespace sudoku.Game
 		public override string ToString()
 		{
 			string result = "";
-			_cells.ForEach(cell => result.Concat(cell.ToString()));
+			_cells.ForEach(cell => result = (string)result.Concat(cell.ToString()));
 			return result;
 		}
 	}

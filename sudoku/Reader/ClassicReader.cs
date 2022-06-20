@@ -18,8 +18,10 @@ namespace sudoku.Reader
 			for (int i = 0; i < cellArray.Length; i++)
 			{
 				List<int> allNotes = new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
-				cellArray[i] = new Cell((int)Char.GetNumericValue(fileArray[i]));
-				cellArray[i].Notes = allNotes;
+				cellArray[i] = new Cell((int)Char.GetNumericValue(fileArray[i]))
+				{
+					Notes = allNotes
+				};
 			}
 
 			int groupLength = (int)Math.Sqrt(file.Length);

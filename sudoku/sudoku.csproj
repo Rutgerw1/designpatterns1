@@ -62,7 +62,9 @@
     <Compile Include="Validation\IValidator.cs" />
     <Compile Include="Validation\Validator.cs" />
     <Compile Include="View\GameView.cs" />
+    <Compile Include="View\InputView.cs" />
     <Compile Include="View\InputHandler.cs" />
+    <Compile Include="View\IGameView.cs" />
     <Compile Include="View\IView.cs" />
     <Compile Include="View\States\BaseViewState.cs" />
     <Compile Include="View\States\IViewState.cs" />

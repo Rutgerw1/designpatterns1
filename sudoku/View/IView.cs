@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace sudoku.View
 {
-    interface IView
-    {
-        void PrintMessage(string message, ConsoleColor backgroundColor, ConsoleColor foregroundColor);
-    }
+	interface IView
+	{
+		void PrintMessage(string message, ConsoleColor foregroundColor, ConsoleColor backgroundColor);
+	}
 }

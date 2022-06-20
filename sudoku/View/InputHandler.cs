@@ -16,6 +16,7 @@ namespace sudoku.View
 	{
 		private readonly MainView _mainView;
 		private Puzzle _puzzle;
+		private IGameView _view;
 		private readonly ISolvingAlgorithm _solver;
 
 		public InputHandler(MainView mainView, ISolvingAlgorithm solver)
@@ -33,22 +34,22 @@ namespace sudoku.View
 			OpenFileDialog dialog = new OpenFileDialog();
 			if (dialog.ShowDialog() == DialogResult.OK)
 			{
-				ISudokuReader reader = null;
+				ISudokuReader reader;
 				string path = dialog.FileName;
 				string ext = path.Split('.').Last();
+				string file = File.ReadAllText(path);
 				try
 				{
 					reader = factory.GetReader(ext);
-					string file = File.ReadAllText(path);
-					_puzzle = reader.CreatePuzzle(file);
 				}
 				catch (KeyNotFoundException)
 				{
 					List<string> typesList = new List<string>(factory.Types.Keys);
 					string typesString = string.Join(", ", typesList.ToArray());
 					_mainView.PrintInvalidFile(typesString);
-					this.StartGame();
+					return StartGame();
 				}
+				_puzzle = reader.CreatePuzzle(file);
 			}
 
 			return _puzzle;
@@ -56,23 +57,28 @@ namespace sudoku.View
 
 		public void PlayGame(Puzzle puzzle)
 		{
-			GameView gameView = new GameView(puzzle);
-			NotesView notesView = new NotesView(puzzle);
+			IGameView inputView = new InputView(puzzle);
+			IGameView notesView = new NotesView(puzzle);
+
+			_view = inputView;
+
 			bool quitGame = false;
 			if (_puzzle.NotesMode)
 			{
 				notesView.PrintGame();
 			}
 			else
-            {
-				gameView.PrintGame();
-            }
+			{
+				_view.PrintGame();
+			}
 
 			while (!quitGame)
 			{
 				ConsoleKeyInfo input = Console.ReadKey(true);
-				List<(int X, int Y)> redrawLocations = new List<(int X, int Y)>();
-				redrawLocations.Add((_puzzle.Location.X, _puzzle.Location.Y));
+				List<(int X, int Y)> redrawLocations = new List<(int X, int Y)>
+				{
+					(_puzzle.Location.X, _puzzle.Location.Y)
+				};
 
 				IValidator validator = new Validator();
 
@@ -100,28 +106,23 @@ namespace sudoku.View
 							Cell changedCell = puzzle.SelectedCell;
 							redrawLocations.AddRange(ClearErrors(changedCell, puzzle));
 						}
-						gameView.ClearErrorMessage();
+						_view.ClearErrorMessage();
 						break;
 					case ConsoleKey.Spacebar:
 						puzzle.ToggleNotesMode();
-						if (_puzzle.NotesMode)
-						{
-							notesView.PrintGame();
-						}
-						else
-                        {
-							gameView.PrintGame();
-                        }
+						_view = puzzle.NotesMode ? notesView : inputView;
+						_view.PrintGame();
 						break;
 					case ConsoleKey.C:
 						List<(int X, int Y)> errors = validator.ValidateWhole(puzzle);
 						if (errors.Count > 0)
 						{
-							gameView.PrintErrorsPresent();
+							_view.PrintErrorsPresent();
 							redrawLocations.AddRange(errors);
-						} else
+						}
+						else
 						{
-							gameView.PrintNoErrorsPresent();
+							_view.PrintNoErrorsPresent();
 						}
 						break;
 					case ConsoleKey.S:
@@ -129,10 +130,10 @@ namespace sudoku.View
 						if (errors.Count == 0)
 						{
 							bool solved = _solver.Solve(puzzle, validator);
-							gameView.PrintGame();
+							_view.PrintGame();
 							if (!solved)
 							{
-								gameView.PrintUnsolvable();
+								_view.PrintUnsolvable();
 							}
 							else
 							{
@@ -141,7 +142,7 @@ namespace sudoku.View
 						}
 						else
 						{
-							gameView.PrintErrorsPresent();
+							_view.PrintErrorsPresent();
 							redrawLocations.AddRange(errors);
 						}
 						break;
@@ -153,22 +154,14 @@ namespace sudoku.View
 								Cell changedCell = puzzle.SelectedCell;
 								redrawLocations.AddRange(ClearErrors(changedCell, puzzle));
 							}
-							gameView.ClearErrorMessage();
+							_view.ClearErrorMessage();
 						}
 						break;
 				}
 				redrawLocations.Add((_puzzle.Location.X, _puzzle.Location.Y));
-				if (_puzzle.NotesMode)
-				{
-					notesView.RePrintCells(redrawLocations);
-					//notesView.PrintGame();
-				}
-				else
-				{
-					gameView.RePrintCells(redrawLocations);
-				}
+				_view.RePrintCells(redrawLocations);
 			}
-			gameView.PrintFinish();
+			_view.PrintFinish();
 		}
 
 		private List<(int X, int Y)> ClearErrors(Cell changedCell, Puzzle puzzle)
