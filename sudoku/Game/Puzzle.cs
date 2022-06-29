@@ -27,6 +27,8 @@ namespace sudoku.Game
         private bool _notesMode;
 		public bool NotesMode { get => _notesMode; }
 
+		public int MaxNumber { get => SubPuzzles == null ? Rows.Count : SubPuzzles[0].Rows.Count; }
+
 		public Puzzle(List<Group> rows, List<Group> columns, List<Region> regions, List<Puzzle> subPuzzles = null)
 		{
 			_rows = rows;

@@ -47,7 +47,7 @@
     <Compile Include="Game\Cell.cs" />
     <Compile Include="Game\DirectionEnum.cs" />
     <Compile Include="Game\Group.cs" />
-    <Compile Include="Game\ICell.cs" />
+    <Compile Include="Game\IPuzzleComponent.cs" />
     <Compile Include="Game\Puzzle.cs" />
     <Compile Include="Game\Region.cs" />
     <Compile Include="Program.cs" />

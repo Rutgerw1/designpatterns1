@@ -17,8 +17,7 @@ namespace sudoku.SolvingAlgorithm
 			if (location != null)
 			{
 				Cell cell = puzzle.Rows[location.Value.Y].Cells[location.Value.X];
-				int maxNumber = puzzle.SubPuzzles == null ? puzzle.Rows.Count : puzzle.SubPuzzles[0].Rows.Count;
-				for (int i = 1; i <= maxNumber; i++)
+				for (int i = 1; i <= puzzle.MaxNumber; i++)
 				{
 					cell.Number = i;
 					if (validator.ValidateOne(puzzle, cell, location.Value) && Solve(puzzle, validator))
