@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace sudoku.Game
 {
-	public interface ICell
-	{
-		string ToString();
-	}
+    internal interface ICell
+    {
+        string ToString();
+    }
 }

@@ -16,7 +16,8 @@ namespace sudoku.View
 		public GameView(Puzzle puzzle)
 		{
 			_puzzle = puzzle;
-		}
+            Console.SetBufferSize(2500, 2500);
+        }
 
 		public abstract void RePrintCells(List<(int X, int Y)> redrawLocations);
 		public abstract void PrintRow(Group row, int currentRow);
@@ -47,7 +48,10 @@ namespace sudoku.View
 
 		private void PrintInstructions()
 		{
-			Console.SetCursorPosition(_puzzle.Columns.Count * ReprintFactorX + 2, _puzzle.Rows.Count * ReprintFactorY / 2 - 2);
+            Console.SetCursorPosition(_puzzle.Columns.Count * ReprintFactorX + 2, _puzzle.Rows.Count * ReprintFactorY / 2 - 3);
+            PrintMessage("  Commands: ");
+
+            Console.SetCursorPosition(_puzzle.Columns.Count * ReprintFactorX + 2, _puzzle.Rows.Count * ReprintFactorY / 2 - 2);
 			PrintMessage("  Quit game: ");
 			PrintMessage("Esc", ConsoleColor.Magenta);
 
@@ -66,7 +70,11 @@ namespace sudoku.View
 			Console.SetCursorPosition(_puzzle.Columns.Count * ReprintFactorX + 2, _puzzle.Rows.Count * ReprintFactorY / 2 + 2);
 			PrintMessage("  Solve: ");
 			PrintMessage("S", ConsoleColor.Magenta);
-		}
+
+            Console.SetCursorPosition(_puzzle.Columns.Count * ReprintFactorX + 2, _puzzle.Rows.Count * ReprintFactorY / 2 + 3);
+            PrintMessage("  Won?: ");
+            PrintMessage("Enter", ConsoleColor.Magenta);
+        }
 
 		public void ClearErrorMessage()
 		{
@@ -100,7 +108,22 @@ namespace sudoku.View
 			PrintMessage("The current state of this puzzle is unsolvable, but there are no immediate conflicts.");
 		}
 
-		public bool AreSameRegion(Cell[] cells)
+        public void PrintCorrectWin()
+        {
+            ClearErrorMessage();
+            PrintMessage("Congratulations, you completed this sudoku successfully!");
+			Console.ReadKey(true);
+        }
+
+        public void PrintIncorrectWin()
+        {
+            ClearErrorMessage();
+            PrintMessage("Something in this sudoku is not correct.");
+        }
+
+
+
+        public bool AreSameRegion(Cell[] cells)
 		{
 			return cells.Length <= 1 ||
 				(

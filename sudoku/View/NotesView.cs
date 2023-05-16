@@ -46,7 +46,7 @@ namespace sudoku.View
 		{
 			for (int noteRowCount = 0; noteRowCount < _sqrt; noteRowCount++)
 			{
-				Console.SetCursorPosition(cellIndex * _reprintFactorX, currentRow * _reprintFactorY + noteRowCount + 1);
+				 Console.SetCursorPosition(cellIndex * _reprintFactorX, currentRow * _reprintFactorY + noteRowCount + 1);
 				PrintCellNotesRow(row, currentRow, noteRowCount, cellIndex);
 			}
 		}
@@ -55,6 +55,11 @@ namespace sudoku.View
 		{
 			Cell previousCell = cellIndex > 0 ? row.Cells[cellIndex - 1] : null;
 			Cell currentCell = row.Cells[cellIndex];
+			ConsoleColor bgColor = ConsoleColor.Black;
+			if (currentCell.Conflicts.Count > 0 || currentCell.OutOfBounds)
+			{
+				bgColor = ConsoleColor.Red;
+			}
 			ConsoleColor color = ConsoleColor.White;
 			if (AreSameRegion(new Cell[] { previousCell, currentCell }))
 			{
@@ -65,7 +70,6 @@ namespace sudoku.View
 				(previousCell != null && previousCell.IsActive) ||
 				(currentCell != null && currentCell.IsActive);
 			PrintMessage(printCellSeparator ? " | " : "   ", color);
-			ConsoleColor bgColor = ConsoleColor.Black;
 			if (_puzzle.Location.Y == currentRow && _puzzle.Location.X == cellIndex)
 			{
 				bgColor = ConsoleColor.DarkYellow;
@@ -156,12 +160,17 @@ namespace sudoku.View
 		{
 			foreach ((int X, int Y) in locations)
 			{
+				Cell cell = _puzzle.Rows[Y].Cells[X];
 				Console.CursorTop = Y * _reprintFactorY + 1;
 				Console.CursorLeft = X * _reprintFactorX + 3;
 				if (_puzzle.Location.Y == Y && _puzzle.Location.X == X)
 				{
 					PrintBigCell(X, Y, _puzzle.Rows[Y].Cells[X], ConsoleColor.DarkYellow);
 				}
+				else if(cell.Conflicts.Count > 0 || cell.OutOfBounds)
+				{
+                    PrintBigCell(X, Y, _puzzle.Rows[Y].Cells[X], ConsoleColor.Red);
+                }
 				else
 				{
 					PrintBigCell(X, Y, _puzzle.Rows[Y].Cells[X]);

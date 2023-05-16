@@ -47,7 +47,7 @@ namespace sudoku.View
 					List<string> typesList = new List<string>(factory.Types.Keys);
 					string typesString = string.Join(", ", typesList.ToArray());
 					_mainView.PrintInvalidFile(typesString);
-					return StartGame();
+                    return StartGame();
 				}
 				_puzzle = reader.CreatePuzzle(file);
 			}
@@ -146,7 +146,18 @@ namespace sudoku.View
 							redrawLocations.AddRange(errors);
 						}
 						break;
-					default:
+                    case ConsoleKey.Enter:
+                        errors = validator.ValidateWhole(puzzle);
+                        if (errors.Count > 0 || puzzle.FirstEmptyCellLocation() != null)
+                        {
+                            _view.PrintIncorrectWin();
+                        }
+                        else
+                        {
+                            _view.PrintCorrectWin();
+                        }
+                        break;
+                    default:
 						if (char.IsDigit(input.KeyChar))
 						{
 							if (puzzle.ChangeCellValue(int.Parse(input.KeyChar.ToString())))

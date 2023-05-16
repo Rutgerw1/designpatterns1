@@ -15,5 +15,9 @@ namespace sudoku.View
 		void PrintUnsolvable();
 		void RePrintCells(List<(int X, int Y)> redrawLocations);
 		void PrintFinish();
-	}
+		void PrintCorrectWin();
+		void PrintIncorrectWin();
+
+
+    }
 }
