@@ -1,15 +1,13 @@
-﻿using sudoku.Game;
-using sudoku.Factory;
+﻿using sudoku.Creation;
+using sudoku.Game;
 using sudoku.SolvingAlgorithm;
+using sudoku.View.States;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Drawing;
-using sudoku.View.States;
 
 namespace sudoku.View
 {
@@ -48,7 +46,7 @@ namespace sudoku.View
 					List<string> typesList = new List<string>(factory.Types.Keys);
 					string typesString = string.Join(", ", typesList.ToArray());
 					MainView.PrintInvalidFile(typesString);
-                    StartGame();
+					StartGame();
 				}
 			}
 		}
@@ -56,11 +54,11 @@ namespace sudoku.View
 		public void PlayGame()
 		{
 			IViewState normalViewState = new NormalViewState(Puzzle);
-            IViewState notesViewState = new NotesViewState(Puzzle);
-            ViewState = normalViewState;
+			IViewState notesViewState = new NotesViewState(Puzzle);
+			ViewState = normalViewState;
 
 			bool quitGame = false;
-            ViewState.PrintGame();
+			ViewState.PrintGame();
 
 			while (!quitGame)
 			{
@@ -93,11 +91,11 @@ namespace sudoku.View
 						break;
 					case ConsoleKey.Spacebar:
 						Puzzle.ChangeState(Puzzle.State is NormalViewState ? notesViewState : normalViewState);
-                        ViewState = Puzzle.State;
-                        Console.Clear();
+						ViewState = Puzzle.State;
+						Console.Clear();
 						System.Threading.Thread.Sleep(5);
-                        ViewState.FitConsole();
-                        ViewState.PrintGame();
+						ViewState.FitConsole();
+						ViewState.PrintGame();
 						break;
 					case ConsoleKey.C:
 						//List<(int X, int Y)> errors = validator.ValidateWhole(Puzzle);
@@ -132,18 +130,18 @@ namespace sudoku.View
 						//	redrawLocations.AddRange(errors);
 						//}
 						break;
-                    case ConsoleKey.Enter:
-                        //errors = validator.ValidateWhole(Puzzle);
-                        //if (errors.Count > 0 || Puzzle.FirstEmptyCellLocation() != null)
-                        //{
-                        //    View.PrintIncorrectWin();
-                        //}
-                        //else
-                        //{
-                        //    View.PrintCorrectWin();
-                        //}
-                        break;
-                    default:
+					case ConsoleKey.Enter:
+						//errors = validator.ValidateWhole(Puzzle);
+						//if (errors.Count > 0 || Puzzle.FirstEmptyCellLocation() != null)
+						//{
+						//    View.PrintIncorrectWin();
+						//}
+						//else
+						//{
+						//    View.PrintCorrectWin();
+						//}
+						break;
+					default:
 						if (char.IsDigit(input.KeyChar))
 						{
 							redrawLocations.AddRange(HandleNumber(int.Parse(input.KeyChar.ToString())));
@@ -162,7 +160,7 @@ namespace sudoku.View
 			changedLocations.AddRange(Puzzle.CellAtPosition(Puzzle.Cursor).Conflicts.Select(otherCell => otherCell.Position));
 
 			Puzzle.ChangeValueAtCursor(number);
-            ViewState.ClearErrorMessage();
+			ViewState.ClearErrorMessage();
 			return changedLocations;
 		}
 	}

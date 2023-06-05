@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace sudoku.View.States
 {
-    interface IViewState : IView
-    {
+	interface IViewState : IView
+	{
 		void PrintGame();
 		void ClearErrorMessage();
 		void PrintErrorsPresent();
@@ -19,5 +15,5 @@ namespace sudoku.View.States
 		void PrintCorrectWin();
 		void PrintIncorrectWin();
 		void FitConsole();
-    }
+	}
 }

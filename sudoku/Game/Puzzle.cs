@@ -1,27 +1,20 @@
-﻿using sudoku.View;
-using sudoku.View.States;
+﻿using sudoku.View.States;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace sudoku.Game
 {
 	class Puzzle : Composite
 	{
 		public Point Cursor { get; set; }
-		public IViewState State {get; private set;}
+		public IViewState State { get; private set; }
 
-		public int Size { get; }
+		public int Size { get; set; }
 
-		public Puzzle(int size)
+		public Puzzle()
 		{
 			Cursor = new Point(0, 0);
 			State = new NormalViewState(this);
-
-			Size = size;
 		}
 
 		public void ChangeState(IViewState state)
@@ -74,11 +67,11 @@ namespace sudoku.Game
 
 		public Point? FirstEmptyCellPosition()
 		{
-			for (int j = 0; j < Size; j++)
+			for (int y = 0; y < Size; y++)
 			{
-				for (int i = 0; i < Size; i++)
+				for (int x = 0; x < Size; x++)
 				{
-					Cell cell = CellAtPosition(new Point(i, j));
+					Cell cell = CellAtPosition(new Point(x, y));
 					if (cell != null && cell.Value == 0)
 					{
 						return cell.Position;

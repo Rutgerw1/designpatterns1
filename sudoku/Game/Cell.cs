@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace sudoku.Game
 {
@@ -51,7 +47,8 @@ namespace sudoku.Game
 				if (Notes.Contains(value))
 				{
 					Notes.Remove(value);
-				} else
+				}
+				else
 				{
 					Notes.Add(value);
 				}

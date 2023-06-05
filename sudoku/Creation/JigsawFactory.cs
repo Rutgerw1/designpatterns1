@@ -1,12 +1,9 @@
 ﻿using sudoku.Game;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace sudoku.Factory
+namespace sudoku.Creation
 {
 	class JigsawFactory : ISudokuFactory
 	{
@@ -45,11 +42,12 @@ namespace sudoku.Factory
 				}
 			}
 
-			Puzzle puzzle = new Puzzle(groupSize);
+			SudokuBuilder builder = new SudokuBuilder()
+				.SetSize(groupSize);
 
-			rows.Concat(columns).Concat(regions).ToList().ForEach(component => puzzle.AddComponent(component));
+			rows.Concat(columns).Concat(regions).ToList().ForEach(component => builder.AddComponent(component));
 
-			return puzzle;
+			return builder.Build();
 		}
 	}
 }

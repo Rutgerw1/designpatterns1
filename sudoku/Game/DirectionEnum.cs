@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace sudoku.Game
+﻿namespace sudoku.Game
 {
-    public enum Direction
-    {
-        Up,
-        Right,
-        Down,
-        Left
-    }
+	public enum Direction
+	{
+		Up,
+		Right,
+		Down,
+		Left
+	}
 }

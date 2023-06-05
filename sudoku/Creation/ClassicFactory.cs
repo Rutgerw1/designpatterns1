@@ -1,12 +1,9 @@
 ﻿using sudoku.Game;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace sudoku.Factory
+namespace sudoku.Creation
 {
 	class ClassicFactory : ISudokuFactory
 	{
@@ -17,10 +14,11 @@ namespace sudoku.Factory
 			// size of the validation groups (rows, columns, regions)
 			int groupSize = (int)Math.Sqrt(valuesArray.Length);
 
-			int regionHeight = (int)Math.Sqrt(groupSize);	// 3 for 9x9, 2 for 8x8/6x6/4x4
+			int regionHeight = (int)Math.Sqrt(groupSize);   // 3 for 9x9, 2 for 8x8/6x6/4x4
 			int regionWidth = groupSize / regionHeight;     // 3 for 9x9/6x6, 4 for 8x8, 2 for 4x4
 
-			Puzzle puzzle = new Puzzle(groupSize);
+			SudokuBuilder builder = new SudokuBuilder()
+				.SetSize(groupSize);
 
 			Composite[] columns = new Composite[groupSize];
 			Composite[] regions = new Composite[groupSize];
@@ -39,7 +37,7 @@ namespace sudoku.Factory
 
 					// comment examples are for 9x9
 					int regionNumber =
-						(int)(y / regionHeight)	// 0, 1 or 2
+						(int)(y / regionHeight) // 0, 1 or 2
 						* regionHeight      // times 3 gives 0, 3 or 6
 						+ x / regionWidth;  // offsets by 0, 1 or 2 horizontally
 
@@ -55,13 +53,13 @@ namespace sudoku.Factory
 					regions[regionNumber].AddComponent(cell);
 				}
 
-				puzzle.AddComponent(row);
+				builder.AddComponent(row);
 			}
 
-			columns.ToList().ForEach(column => puzzle.AddComponent(column));
-			regions.ToList().ForEach(region => puzzle.AddComponent(region));
+			columns.ToList().ForEach(column => builder.AddComponent(column));
+			regions.ToList().ForEach(region => builder.AddComponent(region));
 
-			return puzzle;
+			return builder.Build();
 		}
 	}
 }
