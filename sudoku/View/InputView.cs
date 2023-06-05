@@ -1,6 +1,7 @@
 ﻿using sudoku.Game;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,54 +10,53 @@ namespace sudoku.View
 {
 	class InputView : GameView
 	{
-		private readonly int _reprintFactorX;
-		private readonly int _reprintFactorY;
-		public override int ReprintFactorX { get => _reprintFactorX; }
-		public override int ReprintFactorY { get => _reprintFactorY; }
+		public override int ReprintFactorX { get; }
+		public override int ReprintFactorY { get; }
 
 		public InputView(Puzzle puzzle) : base(puzzle)
 		{
-			_reprintFactorX = 4;
-			_reprintFactorY = 2;
+			ReprintFactorX = 4;
+			ReprintFactorY = 2;
+
+			FitConsole();
 		}
 
-		public override void PrintRow(Group row, int currentRow)
+		public override void PrintRow(int y)
 		{
-			PrintRowSeparator(row.Cells.Count, _puzzle.Rows.IndexOf(row));
-			for (int i = 0; i < row.Cells.Count; i++)
+			PrintRowSeparator(Puzzle.Size, y);
+			for (int x = 0; x < Puzzle.Size; x++)
 			{
-				PrintCell(row, currentRow, i);
+				PrintCell(new Point(x, y));
 			}
 		}
 
-		public override void PrintCell(Group row, int currentRow, int cellIndex)
+		public override void PrintCell(Point pos)
 		{
-			Cell previousCell = cellIndex > 0 ? row.Cells[cellIndex - 1] : null;
-			Cell currentCell = row.Cells[cellIndex];
+			Cell previousCell = Puzzle.CellAtPosition(new Point(pos.X - 1, pos.Y));
+			Cell currentCell = Puzzle.CellAtPosition(pos);
 
 			ConsoleColor color = ConsoleColor.White;
-			if (AreSameRegion(new Cell[] { previousCell, currentCell }))
+			if (AllSameRegion(previousCell, currentCell))
 			{
 				color = ConsoleColor.DarkBlue;
 			}
-			// only print cell separators if at least 1 of them exists AND is active
-			bool printCellSeparator =
-				(previousCell != null && previousCell.IsActive) ||
-				(currentCell != null && currentCell.IsActive);
 
+			// only print cell separators if at least 1 of them exists AND is active
+			bool printCellSeparator = previousCell != null || currentCell != null;
 			PrintMessage(printCellSeparator ? " | " : "   ", color);
 
 			ConsoleColor bgColor = ConsoleColor.Black;
-			if (currentCell.Conflicts.Count > 0 || currentCell.OutOfBounds)
+			if (currentCell?.Conflicts.Count > 0)
 			{
 				bgColor = ConsoleColor.Red;
 			}
-			if (_puzzle.Location.Y == currentRow && _puzzle.Location.X == cellIndex)
+			if (Puzzle.Cursor.Equals(pos))
 			{
 				bgColor = ConsoleColor.DarkYellow;
 			}
-			PrintMessage(currentCell.ToString(), backgroundColor: bgColor);
-			if (cellIndex == row.Cells.Count - 1)
+			string message = currentCell?.ToString() ?? " ";
+			PrintMessage(message, backgroundColor: bgColor);
+			if (pos.X == Puzzle.Size - 1)
 			{
 				PrintMessage(printCellSeparator ? " |\n" : "  \n");
 			}
@@ -67,69 +67,25 @@ namespace sudoku.View
 			PrintMessage(" ");
 			for (int i = 0; i < length; i++)
 			{
-				Cell cell1 = null;
-				Cell cell2 = null;
-				// these are needed for determining whether a '+' should be drawn
-				Cell cell3 = null;
-				Cell cell4 = null;
-				if (rowNumber > 0)
-				{
-					cell1 = _puzzle.Rows[rowNumber - 1].Cells[i];
-					if (i > 0)
-					{
-						cell3 = _puzzle.Rows[rowNumber - 1].Cells[i - 1];
-					}
-				}
-				if (rowNumber < _puzzle.Rows.Count)
-				{
-					cell2 = _puzzle.Rows[rowNumber].Cells[i];
-					if (i > 0)
-					{
-						cell4 = _puzzle.Rows[rowNumber].Cells[i - 1];
-					}
-				}
-				// only print cell separators if at least 1 of them exists AND is active
-				bool printCellSeparator =
-					(cell1 != null && cell1.IsActive) ||
-					(cell2 != null && cell2.IsActive);
+				// we need some info on the surrounding cells to determine the kind of separator character
+				Cell cell1 = Puzzle.CellAtPosition(new Point(rowNumber - 1, i));
+				Cell cell2 = Puzzle.CellAtPosition(new Point(rowNumber, i));
+				Cell cell3 = Puzzle.CellAtPosition(new Point(rowNumber - 1, i - 1));
+				Cell cell4 = Puzzle.CellAtPosition(new Point(rowNumber, i - 1));
 
-				bool printCellCrossing = printCellSeparator ||
-					(cell3 != null && cell3.IsActive) ||
-					(cell4 != null && cell4.IsActive);
+				// only print cell separators if at least 1 of them exists
+				bool printCellSeparator = cell1 != null || cell2 != null;
+				bool printCellCrossing = printCellSeparator || cell3 != null || cell4 != null;
 
-				ConsoleColor color = !AreSameRegion(new Cell[] { cell1, cell2, cell3, cell4 }) ? ConsoleColor.White : ConsoleColor.DarkBlue;
+				ConsoleColor color = AllSameRegion(cell1, cell2, cell3, cell4) ? ConsoleColor.DarkBlue : ConsoleColor.White;
 				PrintMessage(printCellCrossing ? "+" : " ", color);
-				color = !AreSameRegion(new Cell[] { cell1, cell2 }) ? ConsoleColor.White : ConsoleColor.DarkBlue;
+				color = AllSameRegion(cell1, cell2) ? ConsoleColor.DarkBlue : ConsoleColor.White;
 				PrintMessage(printCellSeparator ? "---" : "   ", color);
+
 				if (i == length - 1)
 				{
 					PrintMessage(printCellCrossing ? "+\n" : " \n");
 				}
-			}
-		}
-
-		public override void RePrintCells(List<(int X, int Y)> locations)
-		{
-			foreach ((int X, int Y) in locations)
-			{
-				Console.CursorTop = Y * _reprintFactorY + 1;
-				Console.CursorLeft = X * _reprintFactorX + 3;
-
-				Cell cell = _puzzle.Rows[Y].Cells[X];
-				if (_puzzle.Location.Y == Y && _puzzle.Location.X == X)
-				{
-					PrintMessage(cell.ToString(), backgroundColor: ConsoleColor.DarkYellow);
-				}
-				else if (cell.Conflicts.Count > 0 || cell.OutOfBounds)
-				{
-					PrintMessage(cell.ToString(), backgroundColor: ConsoleColor.Red);
-				}
-				else
-				{
-					PrintMessage(cell.ToString());
-				}
-
-				Console.CursorLeft--;
 			}
 		}
 	}

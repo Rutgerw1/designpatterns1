@@ -1,5 +1,5 @@
 ﻿using sudoku.Game;
-using sudoku.Reader;
+using sudoku.Factory;
 using sudoku.SolvingAlgorithm;
 using sudoku.View;
 using System;
@@ -14,17 +14,14 @@ namespace sudoku
     class Program
     {
         [STAThread]
-        static void Main(string[] args)
+        static void Main()
         {
             MainView mainView = new MainView();
             ISolvingAlgorithm solver = new BacktrackAlgorithm();
             InputHandler inputHandler = new InputHandler(mainView, solver);
-            Puzzle puzzle = inputHandler.StartGame();
+            inputHandler.StartGame();
 
-            if (puzzle != null)
-            {
-                inputHandler.PlayGame(puzzle);
-            }
+            inputHandler.PlayGame();
         }
     }
 }

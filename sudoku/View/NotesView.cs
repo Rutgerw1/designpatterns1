@@ -1,6 +1,7 @@
 ﻿using sudoku.Game;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,103 +10,97 @@ namespace sudoku.View
 {
 	class NotesView : GameView
 	{
-		private readonly int _sqrt;
-		private readonly int _sqrtCeiling;
-		private readonly int _reprintFactorX;
-		private readonly int _reprintFactorY;
-		public override int ReprintFactorX { get => _reprintFactorX; }
-		public override int ReprintFactorY { get => _reprintFactorY; }
+		private int NotesWidth { get; }
+		private int NotesHeight { get; }
+		public override int ReprintFactorX { get; }
+		public override int ReprintFactorY { get; }
 
 		public NotesView(Puzzle puzzle) : base(puzzle)
 		{
-			if (puzzle.SubPuzzles != null)
-			{
-				_sqrt = (int)Math.Sqrt(_puzzle.SubPuzzles[0].Rows.Count);
-				_sqrtCeiling = _puzzle.SubPuzzles[0].Rows.Count / _sqrt;
+			if (Puzzle.Components[0].GetType() == typeof(Puzzle))
+			{ // samurai
+				NotesWidth = 3;
+				NotesHeight = 3;
 			}
 			else
 			{
-				_sqrt = (int)Math.Sqrt(_puzzle.Rows.Count);
-				_sqrtCeiling = _puzzle.Rows.Count / _sqrt;
+				NotesWidth = (int)Math.Sqrt(Puzzle.Size);
+				NotesHeight = Puzzle.Size / NotesWidth;
 			}
-			_reprintFactorY = 1 + _sqrt;
-			_reprintFactorX = 3 + _sqrtCeiling;
+			ReprintFactorX = 3 + NotesWidth;
+			ReprintFactorY = 1 + NotesHeight;
 		}
 
-		public override void PrintRow(Group row, int currentRow)
+		public override void PrintRow(int y)
 		{
-			PrintRowSeparator(row.Cells.Count, _puzzle.Rows.IndexOf(row));
-			for (int i = 0; i < row.Cells.Count; i++)
+			PrintRowSeparator(Puzzle.Size, y);
+			for (int x = 0; x < Puzzle.Size; x++)
 			{
-				Console.SetCursorPosition(i * _reprintFactorX, currentRow * _reprintFactorY + 1);
-				PrintCell(row, currentRow, i);
+				Console.SetCursorPosition(x * ReprintFactorX, y * ReprintFactorY + 1);
+				PrintCell(new Point(x, y));
 			}
 		}
 
-		public override void PrintCell(Group row, int currentRow, int cellIndex)
+		public override void PrintCell(Point pos)
 		{
-			for (int noteRowCount = 0; noteRowCount < _sqrt; noteRowCount++)
+			// noteY denotes the relative vertical position of a note within a cell
+			for (int noteY = 0; noteY < NotesHeight; noteY++)
 			{
-				 Console.SetCursorPosition(cellIndex * _reprintFactorX, currentRow * _reprintFactorY + noteRowCount + 1);
-				PrintCellNotesRow(row, currentRow, noteRowCount, cellIndex);
+				Console.SetCursorPosition(pos.X * ReprintFactorX, pos.Y * ReprintFactorY + noteY + 1);
+				PrintCellNotesRow(pos, noteY);
 			}
 		}
 
-		private void PrintCellNotesRow(Group row, int currentRow, int noteRowCount, int cellIndex)
+		private void PrintCellNotesRow(Point pos, int noteY)
 		{
-			Cell previousCell = cellIndex > 0 ? row.Cells[cellIndex - 1] : null;
-			Cell currentCell = row.Cells[cellIndex];
+			Cell previousCell = Puzzle.CellAtPosition(new Point(pos.X - 1, pos.Y));
+			Cell currentCell = Puzzle.CellAtPosition(pos);
 			ConsoleColor bgColor = ConsoleColor.Black;
-			if (currentCell.Conflicts.Count > 0 || currentCell.OutOfBounds)
+
+			if (currentCell?.Conflicts.Count > 0)
 			{
 				bgColor = ConsoleColor.Red;
 			}
 			ConsoleColor color = ConsoleColor.White;
-			if (AreSameRegion(new Cell[] { previousCell, currentCell }))
+
+			if (AllSameRegion(previousCell, currentCell))
 			{
 				color = ConsoleColor.DarkBlue;
 			}
-			// only print cell separators if at least 1 of them exists AND is active
-			bool printCellSeparator =
-				(previousCell != null && previousCell.IsActive) ||
-				(currentCell != null && currentCell.IsActive);
+
+			// only print cell separators if at least 1 of them exists
+			bool printCellSeparator = previousCell != null || currentCell != null;
 			PrintMessage(printCellSeparator ? " | " : "   ", color);
-			if (_puzzle.Location.Y == currentRow && _puzzle.Location.X == cellIndex)
+
+			if (Puzzle.Cursor.Equals(pos))
 			{
 				bgColor = ConsoleColor.DarkYellow;
 			}
 
-			for (int notesIndex = noteRowCount * _sqrtCeiling; notesIndex < _sqrtCeiling * (noteRowCount + 1); notesIndex++)
+			for (int noteX = 0; noteX < NotesWidth; noteX++)
 			{
-				PrintNote(notesIndex, currentCell, bgColor);
-				if (notesIndex == _sqrtCeiling * (noteRowCount + 1) - 1)
-				{
-					if (cellIndex == row.Cells.Count - 1)
-					{
-						PrintMessage(printCellSeparator ? " |" : "  ");
-						if (noteRowCount == _sqrt - 1)
-						{
-							PrintMessage("\n");
-						}
-					}
-				}
+				PrintNote(noteX, noteY, currentCell, bgColor);
+			}
+			if (pos.X == Puzzle.Size - 1)
+			{
+				PrintMessage(printCellSeparator ? " |\n" : "  \n");
 			}
 		}
 
-		private void PrintNote(int notesIndex, Cell currentCell, ConsoleColor bgColor)
+		private void PrintNote(int noteX, int noteY, Cell currentCell, ConsoleColor bgColor)
 		{
 			string message = " ";
-			if (currentCell.Number == 0)
+			if (currentCell?.Value == 0)
 			{
-				int note = notesIndex + 1;
+				int note = noteY * NotesWidth + noteX + 1;
 				if (currentCell.Notes.Contains(note))
 				{
 					message = note.ToString();
 				}
 			}
-			else if (notesIndex == _sqrtCeiling + 1)
+			else if (noteX == NotesWidth / 2 && noteY == NotesHeight / 2)
 			{
-				message = currentCell.Number.ToString();
+				message = currentCell?.Value.ToString();
 			}
 			PrintMessage(message, backgroundColor: bgColor);
 		}
@@ -115,79 +110,24 @@ namespace sudoku.View
 			PrintMessage(" ");
 			for (int i = 0; i < length; i++)
 			{
-				Cell cell1 = null;
-				Cell cell2 = null;
-				// these are needed for determining whether a '+' should be drawn
-				Cell cell3 = null;
-				Cell cell4 = null;
-				if (rowNumber > 0)
-				{
-					cell1 = _puzzle.Rows[rowNumber - 1].Cells[i];
-					if (i > 0)
-					{
-						cell3 = _puzzle.Rows[rowNumber - 1].Cells[i - 1];
-					}
-				}
-				if (rowNumber < _puzzle.Rows.Count)
-				{
-					cell2 = _puzzle.Rows[rowNumber].Cells[i];
-					if (i > 0)
-					{
-						cell4 = _puzzle.Rows[rowNumber].Cells[i - 1];
-					}
-				}
-				// only print cell separators if at least 1 of them exists AND is active
-				bool printCellSeparator =
-					(cell1 != null && cell1.IsActive) ||
-					(cell2 != null && cell2.IsActive);
+				// we need some info on the surrounding cells to determine the kind of separator character
+				Cell cell1 = Puzzle.CellAtPosition(new Point(rowNumber - 1, i));
+				Cell cell2 = Puzzle.CellAtPosition(new Point(rowNumber, i));
+				Cell cell3 = Puzzle.CellAtPosition(new Point(rowNumber - 1, i - 1));
+				Cell cell4 = Puzzle.CellAtPosition(new Point(rowNumber, i - 1));
 
-				bool printCellCrossing = printCellSeparator ||
-					(cell3 != null && cell3.IsActive) ||
-					(cell4 != null && cell4.IsActive);
+				// only print cell separators if at least 1 of them exists
+				bool printCellSeparator = cell1 != null || cell2 != null;
+				bool printCellCrossing = printCellSeparator || cell3 != null || cell4 != null;
 
-				ConsoleColor color = !AreSameRegion(new Cell[] { cell1, cell2, cell3, cell4 }) ? ConsoleColor.White : ConsoleColor.DarkBlue;
+				ConsoleColor color = AllSameRegion(cell1, cell2, cell3, cell4) ? ConsoleColor.DarkBlue : ConsoleColor.White;
 				PrintMessage(printCellCrossing ? "+" : " ", color);
-				color = !AreSameRegion(new Cell[] { cell1, cell2 }) ? ConsoleColor.White : ConsoleColor.DarkBlue;
-				PrintMessage(printCellSeparator ? new string('-', _sqrtCeiling + 2) : new string(' ', _sqrtCeiling + 2), color);
+				color = AllSameRegion(cell1, cell2) ? ConsoleColor.DarkBlue : ConsoleColor.White;
+				PrintMessage(printCellSeparator ? new string('-', NotesWidth + 2) : new string(' ', NotesWidth + 2), color);
+
 				if (i == length - 1)
 				{
 					PrintMessage(printCellCrossing ? "+\n" : " \n");
-				}
-			}
-		}
-
-		public override void RePrintCells(List<(int X, int Y)> locations)
-		{
-			foreach ((int X, int Y) in locations)
-			{
-				Cell cell = _puzzle.Rows[Y].Cells[X];
-				Console.CursorTop = Y * _reprintFactorY + 1;
-				Console.CursorLeft = X * _reprintFactorX + 3;
-				if (_puzzle.Location.Y == Y && _puzzle.Location.X == X)
-				{
-					PrintBigCell(X, Y, _puzzle.Rows[Y].Cells[X], ConsoleColor.DarkYellow);
-				}
-				else if(cell.Conflicts.Count > 0 || cell.OutOfBounds)
-				{
-                    PrintBigCell(X, Y, _puzzle.Rows[Y].Cells[X], ConsoleColor.Red);
-                }
-				else
-				{
-					PrintBigCell(X, Y, _puzzle.Rows[Y].Cells[X]);
-				}
-				Console.CursorTop = Y * _reprintFactorY + 1;
-				Console.CursorLeft = X * _reprintFactorX + 3;
-			}
-		}
-
-		private void PrintBigCell(int X, int Y, Cell cell, ConsoleColor bgColor = ConsoleColor.Black)
-		{
-			for (int noteRowCount = 0; noteRowCount < _sqrt; noteRowCount++)
-			{
-				Console.SetCursorPosition(X * _reprintFactorX + 3, Y * _reprintFactorY + noteRowCount + 1);
-				for (int notesIndex = noteRowCount * _sqrtCeiling; notesIndex < _sqrtCeiling * (noteRowCount + 1); notesIndex++)
-				{
-					PrintNote(notesIndex, cell, bgColor);
 				}
 			}
 		}

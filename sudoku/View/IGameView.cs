@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,11 +14,10 @@ namespace sudoku.View
 		void PrintErrorsPresent();
 		void PrintNoErrorsPresent();
 		void PrintUnsolvable();
-		void RePrintCells(List<(int X, int Y)> redrawLocations);
+		void RePrintCells(List<Point> redrawLocations);
 		void PrintFinish();
 		void PrintCorrectWin();
 		void PrintIncorrectWin();
-
-
+		void FitConsole();
     }
 }
