@@ -146,7 +146,7 @@ namespace sudoku.View
 		{
 			Console.SetWindowSize(1, 1);
 			int width = Puzzle.Size * ReprintFactorX + 24;
-			int height = Puzzle.Size * ReprintFactorY + 3;
+			int height = Puzzle.Size * ReprintFactorY + 4;
 
 			Console.SetBufferSize(width, height);
 			if (height > 63)

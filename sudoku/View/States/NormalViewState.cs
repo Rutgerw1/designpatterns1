@@ -65,10 +65,10 @@ namespace sudoku.View.States
 			for (int i = 0; i < length; i++)
 			{
 				// we need some info on the surrounding cells to determine the kind of separator character
-				Cell cell1 = Puzzle.CellAtPosition(new Point(rowNumber - 1, i));
-				Cell cell2 = Puzzle.CellAtPosition(new Point(rowNumber, i));
-				Cell cell3 = Puzzle.CellAtPosition(new Point(rowNumber - 1, i - 1));
-				Cell cell4 = Puzzle.CellAtPosition(new Point(rowNumber, i - 1));
+				Cell cell1 = Puzzle.CellAtPosition(new Point(i, rowNumber - 1));
+				Cell cell2 = Puzzle.CellAtPosition(new Point(i, rowNumber));
+				Cell cell3 = Puzzle.CellAtPosition(new Point(i - 1, rowNumber - 1));
+				Cell cell4 = Puzzle.CellAtPosition(new Point(i - 1, rowNumber));
 
 				// only print cell separators if at least 1 of them exists
 				bool printCellSeparator = cell1 != null || cell2 != null;
