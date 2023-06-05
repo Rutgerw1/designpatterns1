@@ -156,7 +156,7 @@ namespace sudoku.View
 						break;
 				}
 				redrawLocations.Add(Puzzle.Cursor);
-				View.RePrintCells(redrawLocations);
+				View.RePrintCells(redrawLocations.Distinct().ToList());
 			}
 			View.PrintFinish();
 		}
