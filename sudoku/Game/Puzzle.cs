@@ -1,4 +1,6 @@
-﻿using System;
+﻿using sudoku.View;
+using sudoku.View.States;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -10,7 +12,7 @@ namespace sudoku.Game
 	class Puzzle : Composite
 	{
 		public Point Cursor { get; set; }
-		// public IState State {get;set;}
+		public IViewState State {get;set;}
 		public bool NotesMode { get; set; }
 
 		public int Size { get; }
@@ -18,10 +20,15 @@ namespace sudoku.Game
 		public Puzzle(int size)
 		{
 			Cursor = new Point(0, 0);
-			// State = new NormalState();
+			State = new NormalViewState(this);
 			NotesMode = false;
 
 			Size = size;
+		}
+
+		public void ChangeState(IViewState state)
+		{
+			State = state;
 		}
 
 		public void TryMove(Direction direction, int depth = 0)

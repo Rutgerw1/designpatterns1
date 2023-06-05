@@ -1,4 +1,5 @@
 ﻿using sudoku.Game;
+using sudoku.View.States;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace sudoku.View
 {
-	abstract class GameView : IGameView
+	abstract class GameView : IViewState
 	{
 		public Puzzle Puzzle { get; }
 		public abstract int ReprintFactorX { get; }

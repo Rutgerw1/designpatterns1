@@ -60,18 +60,12 @@
     <Compile Include="Factory\ISudokuFactory.cs" />
     <Compile Include="Factory\SudokuFactory.cs" />
     <Compile Include="View\GameView.cs" />
-    <Compile Include="View\InputView.cs" />
     <Compile Include="View\InputHandler.cs" />
-    <Compile Include="View\IGameView.cs" />
-    <Compile Include="View\IView.cs" />
-    <Compile Include="View\States\BaseViewState.cs" />
     <Compile Include="View\States\IViewState.cs" />
+    <Compile Include="View\IView.cs" />
     <Compile Include="View\MainView.cs" />
-    <Compile Include="View\NotesView.cs" />
-    <Compile Include="View\States\IViewStateContext.cs" />
     <Compile Include="View\States\NormalViewState.cs" />
     <Compile Include="View\States\NotesViewState.cs" />
-    <Compile Include="View\States\StateView.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
+using sudoku.View.States;
 
 namespace sudoku.View
 {
@@ -16,7 +17,7 @@ namespace sudoku.View
 	{
 		private MainView MainView { get; }
 		private Puzzle Puzzle { get; set; }
-		private IGameView View { get; set; }
+		private IViewState View { get; set; }
 		private ISolvingAlgorithm Solver { get; }
 
 		public InputHandler(MainView mainView, ISolvingAlgorithm solver)
@@ -54,20 +55,12 @@ namespace sudoku.View
 
 		public void PlayGame()
 		{
-			IGameView inputView = new InputView(Puzzle);
-			IGameView notesView = new NotesView(Puzzle);
-
-			View = inputView;
+			IViewState normalViewState = new NormalViewState(Puzzle);
+            IViewState notesViewState = new NotesViewState(Puzzle);
+            IViewState gameViewState = normalViewState;
 
 			bool quitGame = false;
-			if (Puzzle.NotesMode)
-			{
-				notesView.PrintGame();
-			}
-			else
-			{
-				View.PrintGame();
-			}
+			gameViewState.PrintGame();
 
 			while (!quitGame)
 			{
@@ -99,10 +92,12 @@ namespace sudoku.View
 						redrawLocations.AddRange(HandleNumber(0));
 						break;
 					case ConsoleKey.Spacebar:
-						Puzzle.ToggleNotesMode();
-						View = Puzzle.NotesMode ? notesView : inputView;
-						View.FitConsole();
-						View.PrintGame();
+						Puzzle.State = Puzzle.State is NormalViewState ? notesViewState : normalViewState;
+						gameViewState = Puzzle.State;
+                        Console.Clear();
+						System.Threading.Thread.Sleep(5);
+                        gameViewState.FitConsole();
+                        gameViewState.PrintGame();
 						break;
 					case ConsoleKey.C:
 						//List<(int X, int Y)> errors = validator.ValidateWhole(Puzzle);
@@ -156,9 +151,9 @@ namespace sudoku.View
 						break;
 				}
 				redrawLocations.Add(Puzzle.Cursor);
-				View.RePrintCells(redrawLocations.Distinct().ToList());
+				gameViewState.RePrintCells(redrawLocations.Distinct().ToList());
 			}
-			View.PrintFinish();
+			gameViewState.PrintFinish();
 		}
 
 		private List<Point> HandleNumber(int number)
