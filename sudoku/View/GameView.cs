@@ -13,6 +13,13 @@ namespace sudoku.View
 		public abstract int ReprintFactorX { get; }
 		public abstract int ReprintFactorY { get; }
 
+		protected const ConsoleColor KEYBIND = ConsoleColor.Magenta;
+		protected const ConsoleColor BG_BASE = ConsoleColor.Black;
+		protected const ConsoleColor FG_BASE = ConsoleColor.White;
+		protected const ConsoleColor SAME_REGION = ConsoleColor.Blue;
+		protected const ConsoleColor CONFLICT = ConsoleColor.Red;
+		protected const ConsoleColor CURSOR = ConsoleColor.DarkYellow;
+
 		public GameView(Puzzle puzzle)
 		{
 			Puzzle = puzzle;
@@ -22,13 +29,13 @@ namespace sudoku.View
 		public abstract void PrintRowSeparator(int length, int rowNumber);
 		public abstract void PrintCell(Point pos);
 
-		public void PrintMessage(string message, ConsoleColor foregroundColor = ConsoleColor.White, ConsoleColor backgroundColor = ConsoleColor.Black)
+		public void PrintMessage(string message, ConsoleColor foregroundColor = FG_BASE, ConsoleColor backgroundColor = BG_BASE)
 		{
 			Console.ForegroundColor = foregroundColor;
 			Console.BackgroundColor = backgroundColor;
 			Console.Write(message);
-			Console.ForegroundColor = ConsoleColor.White;
-			Console.BackgroundColor = ConsoleColor.Black;
+			Console.ForegroundColor = FG_BASE;
+			Console.BackgroundColor = BG_BASE;
 		}
 
 		public void PrintGame()
@@ -67,27 +74,27 @@ namespace sudoku.View
 
 			Console.SetCursorPosition(Puzzle.Size * ReprintFactorX + 2, Puzzle.Size * ReprintFactorY / 2 - 2);
 			PrintMessage("  Quit game: ");
-			PrintMessage("Esc", ConsoleColor.Magenta);
+			PrintMessage("Esc", KEYBIND);
 
 			Console.SetCursorPosition(Puzzle.Size * ReprintFactorX + 2, Puzzle.Size * ReprintFactorY / 2 - 1);
 			PrintMessage("  Clear cell: ");
-			PrintMessage("Delete", ConsoleColor.Magenta);
+			PrintMessage("Delete", KEYBIND);
 
 			Console.SetCursorPosition(Puzzle.Size * ReprintFactorX + 2, Puzzle.Size * ReprintFactorY / 2);
 			PrintMessage("  Switch modes: ");
-			PrintMessage("Space", ConsoleColor.Magenta);
+			PrintMessage("Space", KEYBIND);
 
 			Console.SetCursorPosition(Puzzle.Size * ReprintFactorX + 2, Puzzle.Size * ReprintFactorY / 2 + 1);
 			PrintMessage("  Check: ");
-			PrintMessage("C", ConsoleColor.Magenta);
+			PrintMessage("C", KEYBIND);
 
 			Console.SetCursorPosition(Puzzle.Size * ReprintFactorX + 2, Puzzle.Size * ReprintFactorY / 2 + 2);
 			PrintMessage("  Solve: ");
-			PrintMessage("S", ConsoleColor.Magenta);
+			PrintMessage("S", KEYBIND);
 
 			Console.SetCursorPosition(Puzzle.Size * ReprintFactorX + 2, Puzzle.Size * ReprintFactorY / 2 + 3);
 			PrintMessage("  Won?: ");
-			PrintMessage("Enter", ConsoleColor.Magenta);
+			PrintMessage("Enter", KEYBIND);
 		}
 
 		public void ClearErrorMessage()

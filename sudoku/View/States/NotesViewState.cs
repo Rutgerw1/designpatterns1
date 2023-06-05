@@ -51,17 +51,17 @@ namespace sudoku.View.States
 		{
 			Cell previousCell = Puzzle.CellAtPosition(new Point(pos.X - 1, pos.Y));
 			Cell currentCell = Puzzle.CellAtPosition(pos);
-			ConsoleColor bgColor = ConsoleColor.Black;
+			ConsoleColor bgColor = BG_BASE;
 
 			if (currentCell?.Conflicts.Count > 0)
 			{
-				bgColor = ConsoleColor.Red;
+				bgColor = CONFLICT;
 			}
-			ConsoleColor color = ConsoleColor.White;
+			ConsoleColor color = FG_BASE;
 
 			if (AllSameRegion(previousCell, currentCell))
 			{
-				color = ConsoleColor.DarkBlue;
+				color = SAME_REGION;
 			}
 
 			// only print cell separators if at least 1 of them exists
@@ -70,7 +70,7 @@ namespace sudoku.View.States
 
 			if (Puzzle.Cursor.Equals(pos))
 			{
-				bgColor = ConsoleColor.DarkYellow;
+				bgColor = CURSOR;
 			}
 
 			for (int noteX = 0; noteX < NotesWidth; noteX++)
@@ -116,9 +116,9 @@ namespace sudoku.View.States
 				bool printCellSeparator = cell1 != null || cell2 != null;
 				bool printCellCrossing = printCellSeparator || cell3 != null || cell4 != null;
 
-				ConsoleColor color = AllSameRegion(cell1, cell2, cell3, cell4) ? ConsoleColor.DarkBlue : ConsoleColor.White;
+				ConsoleColor color = AllSameRegion(cell1, cell2, cell3, cell4) ? SAME_REGION : FG_BASE;
 				PrintMessage(printCellCrossing ? "+" : " ", color);
-				color = AllSameRegion(cell1, cell2) ? ConsoleColor.DarkBlue : ConsoleColor.White;
+				color = AllSameRegion(cell1, cell2) ? SAME_REGION : FG_BASE;
 				PrintMessage(printCellSeparator ? new string('-', NotesWidth + 2) : new string(' ', NotesWidth + 2), color);
 
 				if (i == length - 1)
