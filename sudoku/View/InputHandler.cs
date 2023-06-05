@@ -17,7 +17,7 @@ namespace sudoku.View
 	{
 		private MainView MainView { get; }
 		private Puzzle Puzzle { get; set; }
-		private IViewState View { get; set; }
+		private IViewState ViewState { get; set; }
 		private ISolvingAlgorithm Solver { get; }
 
 		public InputHandler(MainView mainView, ISolvingAlgorithm solver)
@@ -57,10 +57,10 @@ namespace sudoku.View
 		{
 			IViewState normalViewState = new NormalViewState(Puzzle);
             IViewState notesViewState = new NotesViewState(Puzzle);
-            IViewState gameViewState = normalViewState;
+            ViewState = normalViewState;
 
 			bool quitGame = false;
-			gameViewState.PrintGame();
+            ViewState.PrintGame();
 
 			while (!quitGame)
 			{
@@ -92,12 +92,12 @@ namespace sudoku.View
 						redrawLocations.AddRange(HandleNumber(0));
 						break;
 					case ConsoleKey.Spacebar:
-						Puzzle.State = Puzzle.State is NormalViewState ? notesViewState : normalViewState;
-						gameViewState = Puzzle.State;
+						Puzzle.ChangeState(Puzzle.State is NormalViewState ? notesViewState : normalViewState);
+                        ViewState = Puzzle.State;
                         Console.Clear();
 						System.Threading.Thread.Sleep(5);
-                        gameViewState.FitConsole();
-                        gameViewState.PrintGame();
+                        ViewState.FitConsole();
+                        ViewState.PrintGame();
 						break;
 					case ConsoleKey.C:
 						//List<(int X, int Y)> errors = validator.ValidateWhole(Puzzle);
@@ -151,9 +151,9 @@ namespace sudoku.View
 						break;
 				}
 				redrawLocations.Add(Puzzle.Cursor);
-				gameViewState.RePrintCells(redrawLocations.Distinct().ToList());
+				ViewState.RePrintCells(redrawLocations.Distinct().ToList());
 			}
-			gameViewState.PrintFinish();
+			ViewState.PrintFinish();
 		}
 
 		private List<Point> HandleNumber(int number)
@@ -162,7 +162,7 @@ namespace sudoku.View
 			changedLocations.AddRange(Puzzle.CellAtPosition(Puzzle.Cursor).Conflicts.Select(otherCell => otherCell.Position));
 
 			Puzzle.ChangeValueAtCursor(number);
-			View.ClearErrorMessage();
+            ViewState.ClearErrorMessage();
 			return changedLocations;
 		}
 	}

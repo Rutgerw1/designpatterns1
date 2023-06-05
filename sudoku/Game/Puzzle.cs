@@ -12,8 +12,7 @@ namespace sudoku.Game
 	class Puzzle : Composite
 	{
 		public Point Cursor { get; set; }
-		public IViewState State {get;set;}
-		public bool NotesMode { get; set; }
+		public IViewState State {get; private set;}
 
 		public int Size { get; }
 
@@ -21,7 +20,6 @@ namespace sudoku.Game
 		{
 			Cursor = new Point(0, 0);
 			State = new NormalViewState(this);
-			NotesMode = false;
 
 			Size = size;
 		}
@@ -64,7 +62,7 @@ namespace sudoku.Game
 
 		public void ChangeValueAtCursor(int value)
 		{
-			if (NotesMode)
+			if (State is NotesViewState)
 			{
 				ToggleNoteAtPosition(value, Cursor);
 			}
@@ -90,11 +88,6 @@ namespace sudoku.Game
 
 			// no empty cells
 			return null;
-		}
-
-		public void ToggleNotesMode()
-		{
-			NotesMode = !NotesMode;
 		}
 	}
 }
