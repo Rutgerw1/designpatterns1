@@ -31,6 +31,10 @@ namespace sudoku.View
 
 		public void PrintMessage(string message, ConsoleColor foregroundColor = FG_BASE, ConsoleColor backgroundColor = BG_BASE)
 		{
+			if (Console.WindowWidth < message.Length + 4)
+			{
+				FitConsole(message.Length + 4);
+			}
 			Console.ForegroundColor = foregroundColor;
 			Console.BackgroundColor = backgroundColor;
 			Console.Write(message);
@@ -100,7 +104,7 @@ namespace sudoku.View
 		public void ClearErrorMessage()
 		{
 			Console.SetCursorPosition(0, Puzzle.Size * ReprintFactorY + 2);
-			PrintMessage(new string(' ', Console.BufferWidth - 1));
+			PrintMessage(new string(' ', Console.BufferWidth - 4));
 			Console.SetCursorPosition(3, Puzzle.Size * ReprintFactorY + 2);
 		}
 
@@ -142,11 +146,13 @@ namespace sudoku.View
 			PrintMessage("Something in this sudoku is not correct.");
 		}
 
-		public void FitConsole()
+		public void FitConsole(int minWidth = 0)
 		{
 			Console.SetWindowSize(1, 1);
 			int width = Puzzle.Size * ReprintFactorX + 24;
 			int height = Puzzle.Size * ReprintFactorY + 4;
+
+			width = Math.Max(width, minWidth);
 
 			Console.SetBufferSize(width, height);
 			if (height > 63)

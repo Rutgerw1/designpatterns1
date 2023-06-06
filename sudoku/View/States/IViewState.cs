@@ -14,6 +14,6 @@ namespace sudoku.View.States
 		void PrintFinish();
 		void PrintCorrectWin();
 		void PrintIncorrectWin();
-		void FitConsole();
+		void FitConsole(int minWidth = 0);
 	}
 }

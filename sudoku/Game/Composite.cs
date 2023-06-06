@@ -20,35 +20,48 @@ namespace sudoku.Game
 
 		public bool IsValid(int maxNumber)
 		{
+			bool childrenValid = true;
+			// can't use Any or All because we want to check every element, always
+			Components.ForEach(component =>
+			{
+				if (!component.IsValid(maxNumber)) childrenValid = false;
+			});
+
 			List<Cell> cells = Components.OfType<Cell>().ToList();
 
 			if (!cells.Any())
-			{ // this is a higher level composite, delegate to children
-				if (!Components.All(component => component.IsValid(maxNumber))) return false;
+			{
+				return childrenValid;
 			}
 
-			List<List<Cell>> cellsWithValue = new List<List<Cell>>(maxNumber);
+			List<Cell>[] cellsWithValue = new List<Cell>[maxNumber];
 			bool conflicts = false;
 
+			// we need to check the cell values
 			foreach (Cell cell in cells)
 			{
-				if (cell.Value == 0) continue;
+				if (cell.Value == 0 || cell.Conflicts.Contains(cell)) continue;
 
-				if (cellsWithValue[cell.Value] == null) cellsWithValue[cell.Value] = new List<Cell>();
+				int index = cell.Value - 1;
+				if (cellsWithValue[index] == null) cellsWithValue[index] = new List<Cell>();
 
-				cellsWithValue[cell.Value].Add(cell);
+				cellsWithValue[index].Add(cell);
 			}
 
-			cellsWithValue.ForEach(valueCells =>
+			foreach (List<Cell> valueCells in cellsWithValue)
 			{
-				if (valueCells.Count > 1)
+				if (valueCells?.Count > 1)
 				{ // composite contains multiple cells with the same value
-					valueCells.ForEach(cell => cell.Conflicts.AddRange(valueCells));
+					foreach(Cell cell in valueCells)
+					{
+						IEnumerable<Cell> others = valueCells.Where(other => other != cell);
+						cell.Conflicts.AddRange(others);
+					}
 					conflicts = true;
 				}
-			});
+			}
 
-			return !conflicts;
+			return childrenValid && !conflicts;
 		}
 
 		public void ChangeValueAtPosition(int value, Point position)
@@ -82,6 +95,25 @@ namespace sudoku.Game
 		public bool Contains(Point point)
 		{
 			return Components.Any(component => component.Contains(point));
+		}
+
+		public void ReplaceComponent(ISudokuComponent old, ISudokuComponent new_)
+		{
+			if (Components.Contains(old))
+			{
+				Components.Remove(old);
+				Components.Add(new_);
+			}
+			else
+			{
+				Components.ForEach(component =>
+				{
+					if (component is Composite composite)
+					{
+						composite.ReplaceComponent(old, new_);
+					}
+				});
+			}
 		}
 	}
 }

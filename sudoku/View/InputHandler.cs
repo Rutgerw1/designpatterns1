@@ -13,20 +13,20 @@ namespace sudoku.View
 {
 	class InputHandler
 	{
-		private MainView MainView { get; }
-		private Puzzle Puzzle { get; set; }
-		private IViewState ViewState { get; set; }
-		private ISolvingAlgorithm Solver { get; }
+		private MainView _mainView { get; }
+		private Puzzle _puzzle { get; set; }
+		private IViewState _viewState { get; set; }
+		private ISolvingAlgorithm _solver { get; }
 
 		public InputHandler(MainView mainView, ISolvingAlgorithm solver)
 		{
-			MainView = mainView;
-			Solver = solver;
+			_mainView = mainView;
+			_solver = solver;
 		}
 
 		public void StartGame()
 		{
-			MainView.PrintFilePrompt();
+			_mainView.PrintFilePrompt();
 
 			OpenFileDialog dialog = new OpenFileDialog();
 			if (dialog.ShowDialog() == DialogResult.OK)
@@ -39,13 +39,13 @@ namespace sudoku.View
 
 				try
 				{
-					Puzzle = factory.CreatePuzzle(file);
+					_puzzle = factory.CreatePuzzle(file);
 				}
 				catch (KeyNotFoundException)
 				{
 					List<string> typesList = new List<string>(factory.Types.Keys);
 					string typesString = string.Join(", ", typesList.ToArray());
-					MainView.PrintInvalidFile(typesString);
+					_mainView.PrintInvalidFile(typesString);
 					StartGame();
 				}
 			}
@@ -53,19 +53,19 @@ namespace sudoku.View
 
 		public void PlayGame()
 		{
-			IViewState normalViewState = new NormalViewState(Puzzle);
-			IViewState notesViewState = new NotesViewState(Puzzle);
-			ViewState = normalViewState;
+			IViewState normalViewState = new NormalViewState(_puzzle);
+			IViewState notesViewState = new NotesViewState(_puzzle);
+			_viewState = normalViewState;
 
 			bool quitGame = false;
-			ViewState.PrintGame();
+			_viewState.PrintGame();
 
 			while (!quitGame)
 			{
 				ConsoleKeyInfo input = Console.ReadKey(true);
 				List<Point> redrawLocations = new List<Point>
 				{
-					Puzzle.Cursor
+					_puzzle.Cursor
 				};
 
 				switch (input.Key)
@@ -74,40 +74,39 @@ namespace sudoku.View
 						quitGame = true;
 						break;
 					case ConsoleKey.UpArrow:
-						Puzzle.TryMove(Direction.Up);
+						_puzzle.TryMove(Direction.Up);
 						break;
 					case ConsoleKey.RightArrow:
-						Puzzle.TryMove(Direction.Right);
+						_puzzle.TryMove(Direction.Right);
 						break;
 					case ConsoleKey.DownArrow:
-						Puzzle.TryMove(Direction.Down);
+						_puzzle.TryMove(Direction.Down);
 						break;
 					case ConsoleKey.LeftArrow:
-						Puzzle.TryMove(Direction.Left);
+						_puzzle.TryMove(Direction.Left);
 						break;
 					case ConsoleKey.Backspace:
 					case ConsoleKey.Delete:
 						redrawLocations.AddRange(HandleNumber(0));
 						break;
 					case ConsoleKey.Spacebar:
-						Puzzle.ChangeState(Puzzle.State is NormalViewState ? notesViewState : normalViewState);
-						ViewState = Puzzle.State;
+						_puzzle.ChangeState(_puzzle.State is NormalViewState ? notesViewState : normalViewState);
+						_viewState = _puzzle.State;
 						Console.Clear();
 						System.Threading.Thread.Sleep(5);
-						ViewState.FitConsole();
-						ViewState.PrintGame();
+						_viewState.FitConsole();
+						_viewState.PrintGame();
 						break;
 					case ConsoleKey.C:
-						//List<(int X, int Y)> errors = validator.ValidateWhole(Puzzle);
-						//if (errors.Count > 0)
-						//{
-						//	View.PrintErrorsPresent();
-						//	redrawLocations.AddRange(errors);
-						//}
-						//else
-						//{
-						//	View.PrintNoErrorsPresent();
-						//}
+						if (!_puzzle.IsValid(_puzzle.MaxNumber))
+						{
+							_viewState.PrintErrorsPresent();
+							redrawLocations.AddRange(_puzzle.GetErrorLocations());
+						}
+						else
+						{
+							_viewState.PrintNoErrorsPresent();
+						}
 						break;
 					case ConsoleKey.S:
 						//errors = validator.ValidateWhole(Puzzle);
@@ -148,19 +147,19 @@ namespace sudoku.View
 						}
 						break;
 				}
-				redrawLocations.Add(Puzzle.Cursor);
-				ViewState.RePrintCells(redrawLocations.Distinct().ToList());
+				redrawLocations.Add(_puzzle.Cursor);
+				_viewState.RePrintCells(redrawLocations.Distinct().ToList());
 			}
-			ViewState.PrintFinish();
+			_viewState.PrintFinish();
 		}
 
 		private List<Point> HandleNumber(int number)
 		{
-			List<Point> changedLocations = new List<Point> { Puzzle.Cursor };
-			changedLocations.AddRange(Puzzle.CellAtPosition(Puzzle.Cursor).Conflicts.Select(otherCell => otherCell.Position));
+			List<Point> changedLocations = new List<Point> { _puzzle.Cursor };
+			changedLocations.AddRange(_puzzle.CellAtPosition(_puzzle.Cursor).Conflicts.Select(otherCell => otherCell.Position));
 
-			Puzzle.ChangeValueAtCursor(number);
-			ViewState.ClearErrorMessage();
+			_puzzle.ChangeValueAtCursor(number);
+			_viewState.ClearErrorMessage();
 			return changedLocations;
 		}
 	}

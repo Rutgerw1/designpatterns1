@@ -29,7 +29,7 @@ namespace sudoku.Creation
 			return Types[ext]();
 		}
 
-		public Puzzle CreatePuzzle(string file, Point offset = default)
+		public Puzzle CreatePuzzle(string file)
 		{
 			ISudokuFactory concreteFactory = GetFactory(_extension);
 

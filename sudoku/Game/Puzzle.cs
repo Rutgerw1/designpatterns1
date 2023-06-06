@@ -1,5 +1,6 @@
 ﻿using sudoku.View.States;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace sudoku.Game
@@ -9,12 +10,15 @@ namespace sudoku.Game
 		public Point Cursor { get; set; }
 		public IViewState State { get; private set; }
 
-		public int Size { get; set; }
+		public int Size { get; }
+		public int MaxNumber { get; }
 
-		public Puzzle()
+		public Puzzle(int size, int maxNumber)
 		{
 			Cursor = new Point(0, 0);
 			State = new NormalViewState(this);
+			Size = size;
+			MaxNumber = maxNumber;
 		}
 
 		public void ChangeState(IViewState state)
@@ -81,6 +85,21 @@ namespace sudoku.Game
 
 			// no empty cells
 			return null;
+		}
+
+		public List<Point> GetErrorLocations()
+		{
+			List<Point> errors = new List<Point>();
+			for (int y = 0; y < Size; y++)
+			{
+				for (int x = 0; x < Size; x++)
+				{
+					Cell cell = CellAtPosition(new Point(x, y));
+					if (cell?.Conflicts.Count > 0) errors.Add(cell.Position);
+				}
+			}
+
+			return errors;
 		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using sudoku.Game;
+﻿using sudoku.Creation.Builders;
+using sudoku.Game;
 using System;
 using System.Drawing;
 using System.Linq;
@@ -7,7 +8,7 @@ namespace sudoku.Creation
 {
 	class JigsawFactory : ISudokuFactory
 	{
-		public Puzzle CreatePuzzle(string file, Point offset = default)
+		public Puzzle CreatePuzzle(string file)
 		{
 			string[] cellStrings = new ArraySegment<string>(file.Split('='), 1, 81).ToArray();
 
@@ -43,7 +44,8 @@ namespace sudoku.Creation
 			}
 
 			SudokuBuilder builder = new SudokuBuilder()
-				.SetSize(groupSize);
+				.SetSize(groupSize)
+				.SetMaxNumber(groupSize);
 
 			rows.Concat(columns).Concat(regions).ToList().ForEach(component => builder.AddComponent(component));
 

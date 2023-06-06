@@ -45,7 +45,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Creation\SudokuBuilder.cs" />
+    <Compile Include="Creation\Builders\SamuraiBuilder.cs" />
+    <Compile Include="Creation\Builders\SudokuBuilder.cs" />
     <Compile Include="SolvingAlgorithm\BacktrackAlgorithm.cs" />
     <Compile Include="Creation\ClassicFactory.cs" />
     <Compile Include="Creation\JigsawFactory.cs" />

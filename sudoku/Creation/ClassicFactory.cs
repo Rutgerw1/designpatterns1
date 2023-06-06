@@ -1,4 +1,5 @@
-﻿using sudoku.Game;
+﻿using sudoku.Creation.Builders;
+using sudoku.Game;
 using System;
 using System.Drawing;
 using System.Linq;
@@ -7,7 +8,7 @@ namespace sudoku.Creation
 {
 	class ClassicFactory : ISudokuFactory
 	{
-		public Puzzle CreatePuzzle(string file, Point offset = default)
+		public Puzzle CreatePuzzle(string file)
 		{
 			char[] valuesArray = file.ToArray();
 
@@ -44,7 +45,6 @@ namespace sudoku.Creation
 					if (regions[regionNumber] == null) regions[regionNumber] = new Composite();
 
 					Point cellPosition = new Point(x, y);
-					cellPosition.Offset(offset);
 					int value = (int)char.GetNumericValue(valuesArray[x + y * groupSize]);
 					Cell cell = new Cell(cellPosition, value, regionNumber);
 

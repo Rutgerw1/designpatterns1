@@ -6,8 +6,8 @@ namespace sudoku.View.States
 {
 	internal class NotesViewState : GameView
 	{
-		private int NotesWidth { get; }
-		private int NotesHeight { get; }
+		private int _notesWidth { get; }
+		private int _notesHeight { get; }
 		public override int ReprintFactorX { get; }
 		public override int ReprintFactorY { get; }
 
@@ -15,16 +15,16 @@ namespace sudoku.View.States
 		{
 			if (Puzzle.Components[0].GetType() == typeof(Puzzle))
 			{ // samurai
-				NotesWidth = 3;
-				NotesHeight = 3;
+				_notesWidth = 3;
+				_notesHeight = 3;
 			}
 			else
 			{
-				NotesWidth = (int)Math.Sqrt(Puzzle.Size);
-				NotesHeight = Puzzle.Size / NotesWidth;
+				_notesWidth = (int)Math.Sqrt(Puzzle.Size);
+				_notesHeight = Puzzle.Size / _notesWidth;
 			}
-			ReprintFactorX = 3 + NotesWidth;
-			ReprintFactorY = 1 + NotesHeight;
+			ReprintFactorX = 3 + _notesWidth;
+			ReprintFactorY = 1 + _notesHeight;
 		}
 
 		public override void PrintRow(int y)
@@ -40,7 +40,7 @@ namespace sudoku.View.States
 		public override void PrintCell(Point pos)
 		{
 			// noteY denotes the relative vertical position of a note within a cell
-			for (int noteY = 0; noteY < NotesHeight; noteY++)
+			for (int noteY = 0; noteY < _notesHeight; noteY++)
 			{
 				Console.SetCursorPosition(pos.X * ReprintFactorX, pos.Y * ReprintFactorY + noteY + 1);
 				PrintCellNotesRow(pos, noteY);
@@ -73,7 +73,7 @@ namespace sudoku.View.States
 				bgColor = CURSOR;
 			}
 
-			for (int noteX = 0; noteX < NotesWidth; noteX++)
+			for (int noteX = 0; noteX < _notesWidth; noteX++)
 			{
 				PrintNote(noteX, noteY, currentCell, bgColor);
 			}
@@ -86,17 +86,20 @@ namespace sudoku.View.States
 		private void PrintNote(int noteX, int noteY, Cell currentCell, ConsoleColor bgColor)
 		{
 			string message = " ";
-			if (currentCell?.Value == 0)
+			if (currentCell != null)
 			{
-				int note = noteY * NotesWidth + noteX + 1;
-				if (currentCell.Notes.Contains(note))
+				if (currentCell.Value == 0)
 				{
-					message = note.ToString();
+					int note = noteY * _notesWidth + noteX + 1;
+					if (currentCell.Notes.Contains(note))
+					{
+						message = note.ToString();
+					}
 				}
-			}
-			else if (noteX == NotesWidth / 2 && noteY == NotesHeight / 2)
-			{
-				message = currentCell?.Value.ToString();
+				else if (noteX == _notesWidth / 2 && noteY == _notesHeight / 2)
+				{
+					message = currentCell.Value.ToString();
+				}
 			}
 			PrintMessage(message, backgroundColor: bgColor);
 		}
@@ -119,7 +122,7 @@ namespace sudoku.View.States
 				ConsoleColor color = AllSameRegion(cell1, cell2, cell3, cell4) ? SAME_REGION : FG_BASE;
 				PrintMessage(printCellCrossing ? "+" : " ", color);
 				color = AllSameRegion(cell1, cell2) ? SAME_REGION : FG_BASE;
-				PrintMessage(printCellSeparator ? new string('-', NotesWidth + 2) : new string(' ', NotesWidth + 2), color);
+				PrintMessage(printCellSeparator ? new string('-', _notesWidth + 2) : new string(' ', _notesWidth + 2), color);
 
 				if (i == length - 1)
 				{

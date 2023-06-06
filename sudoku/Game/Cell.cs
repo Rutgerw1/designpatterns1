@@ -8,8 +8,8 @@ namespace sudoku.Game
 		public Point Position { get; set; }
 		public int Value { get; set; }
 		public int RegionNumber { get; }
-		public List<int> Notes { get; set; }
-		public List<Cell> Conflicts { get; set; }
+		public List<int> Notes { get; }
+		public List<Cell> Conflicts { get;}
 
 		public Cell(Point position, int value, int regionCounter)
 		{
@@ -24,7 +24,7 @@ namespace sudoku.Game
 		{
 			if (Value > maxNumber)
 			{
-				Conflicts.Add(this);
+				if (!Conflicts.Contains(this)) Conflicts.Add(this);
 				return false;
 			}
 			return true;
@@ -35,7 +35,9 @@ namespace sudoku.Game
 			if (Contains(position))
 			{
 				Value = value;
-				Conflicts.ForEach(conflict => conflict.Conflicts.Remove(this));
+				Conflicts.ForEach(conflict => {
+					if (conflict != this) conflict.Conflicts.Remove(this);
+				});
 				Conflicts.Clear();
 			}
 		}
@@ -69,6 +71,11 @@ namespace sudoku.Game
 		public override string ToString()
 		{
 			return Value != 0 ? Value.ToString() : " ";
+		}
+
+		public void Offset(Point offset)
+		{
+			Position = new Point(Position.X + offset.X, Position.Y + offset.Y);
 		}
 	}
 }
