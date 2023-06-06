@@ -1,4 +1,5 @@
 ﻿using sudoku.Game;
+using System.Drawing;
 
 namespace sudoku.SolvingAlgorithm
 {
@@ -6,27 +7,24 @@ namespace sudoku.SolvingAlgorithm
 	{
 		public bool Solve(Puzzle puzzle)
 		{
-			return true;
-			//(int X, int Y)? location = puzzle.FirstEmptyCellLocation();
-			//if (location != null)
-			//{
-			//	Cell cell = puzzle.Rows[location.Value.Y].Cells[location.Value.X];
-			//	for (int i = 1; i <= puzzle.MaxNumber; i++)
-			//	{
-			//		cell.Number = i;
-			//		if (validator.ValidateOne(puzzle, cell, location.Value) && Solve(puzzle, validator))
-			//		{
-			//			return true; // valid option found for cell
-			//		}
-			//	}
-			//	cell.Number = 0;
-			//	cell.Conflicts.Clear();
-			//	return false; // No valid option found for cell
-			//}
-			//else
-			//{
-			//	return true; // No empty cell found
-			//}
+			Cell cell = puzzle.FirstEmptyCell();
+			if (cell != null)
+			{
+				for (int i = 1; i <= puzzle.MaxNumber; i++)
+				{
+					cell.ChangeValueAtPosition(i, cell.Position); // invoke method to deal with clearing of conflicts on other cells
+					if (puzzle.IsValid() && Solve(puzzle))
+					{
+						return true; // valid option found for cell
+					}
+				}
+				cell.ChangeValueAtPosition(0, cell.Position);
+				return false; // No valid option found for cell
+			}
+			else
+			{
+				return true; // No empty cell found
+			}
 		}
 	}
 }

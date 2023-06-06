@@ -5,9 +5,9 @@ namespace sudoku.Creation.Builders
 {
 	class SudokuBuilder
 	{
-		private List<ISudokuComponent> _components { get; }
-		protected int _size { get; set; }
-		protected int _maxNumber { get; set; }
+		private readonly List<ISudokuComponent> _components;
+		protected int _size;
+		protected int _maxNumber;
 
 		public SudokuBuilder()
 		{

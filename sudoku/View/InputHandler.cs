@@ -98,7 +98,7 @@ namespace sudoku.View
 						_viewState.PrintGame();
 						break;
 					case ConsoleKey.C:
-						if (!_puzzle.IsValid(_puzzle.MaxNumber))
+						if (!_puzzle.IsValid())
 						{
 							_viewState.PrintErrorsPresent();
 							redrawLocations.AddRange(_puzzle.GetErrorLocations());
@@ -109,25 +109,24 @@ namespace sudoku.View
 						}
 						break;
 					case ConsoleKey.S:
-						//errors = validator.ValidateWhole(Puzzle);
-						//if (errors.Count == 0)
-						//{
-						//	bool solved = Solver.Solve(Puzzle, validator);
-						//	View.PrintGame();
-						//	if (!solved)
-						//	{
-						//		View.PrintUnsolvable();
-						//	}
-						//	else
-						//	{
-						//		quitGame = true;
-						//	}
-						//}
-						//else
-						//{
-						//	View.PrintErrorsPresent();
-						//	redrawLocations.AddRange(errors);
-						//}
+						if (!_puzzle.IsValid())
+						{
+							_viewState.PrintErrorsPresent();
+							redrawLocations.AddRange(_puzzle.GetErrorLocations());
+						}
+						else
+						{
+							bool solved = _solver.Solve(_puzzle);
+							if (!solved)
+							{
+								_viewState.PrintUnsolvable();
+							}
+							else
+							{
+								_viewState.PrintGame();
+								quitGame = true;
+							}
+						}
 						break;
 					case ConsoleKey.Enter:
 						//errors = validator.ValidateWhole(Puzzle);

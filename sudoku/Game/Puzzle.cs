@@ -69,7 +69,7 @@ namespace sudoku.Game
 			}
 		}
 
-		public Point? FirstEmptyCellPosition()
+		public Cell FirstEmptyCell()
 		{
 			for (int y = 0; y < Size; y++)
 			{
@@ -78,7 +78,7 @@ namespace sudoku.Game
 					Cell cell = CellAtPosition(new Point(x, y));
 					if (cell != null && cell.Value == 0)
 					{
-						return cell.Position;
+						return cell;
 					}
 				}
 			}
@@ -100,6 +100,11 @@ namespace sudoku.Game
 			}
 
 			return errors;
+		}
+
+		public bool IsValid()
+		{
+			return IsValid(MaxNumber);
 		}
 	}
 }

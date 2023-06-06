@@ -19,7 +19,8 @@ namespace sudoku.Creation
 			int regionWidth = groupSize / regionHeight;     // 3 for 9x9/6x6, 4 for 8x8, 2 for 4x4
 
 			SudokuBuilder builder = new SudokuBuilder()
-				.SetSize(groupSize);
+				.SetSize(groupSize)
+				.SetMaxNumber(groupSize);
 
 			Composite[] columns = new Composite[groupSize];
 			Composite[] regions = new Composite[groupSize];
