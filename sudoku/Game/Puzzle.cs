@@ -5,7 +5,7 @@ using System.Drawing;
 
 namespace sudoku.Game
 {
-	class Puzzle : Composite
+	public class Puzzle : Composite
 	{
 		public Point Cursor { get; set; }
 		public IViewState State { get; private set; }

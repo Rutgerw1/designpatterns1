@@ -2,7 +2,7 @@
 
 namespace sudoku.SolvingAlgorithm
 {
-	interface ISolvingAlgorithm
+	public interface ISolvingAlgorithm
 	{
 		bool Solve(Puzzle puzzle);
 	}

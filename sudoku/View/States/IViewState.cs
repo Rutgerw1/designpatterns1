@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace sudoku.View.States
 {
-	interface IViewState : IView
+	public interface IViewState : IView
 	{
 		void PrintGame();
 		void ClearErrorMessage();

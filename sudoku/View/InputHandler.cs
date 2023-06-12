@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace sudoku.View
 {
-	class InputHandler
+	public class InputHandler
 	{
 		private MainView _mainView { get; }
 		private Puzzle _puzzle { get; set; }
@@ -129,14 +129,22 @@ namespace sudoku.View
 						}
 						break;
 					case ConsoleKey.Enter:
-						//errors = validator.ValidateWhole(Puzzle);
-						//if (errors.Count > 0 || Puzzle.FirstEmptyCellLocation() != null)
+						if (!_puzzle.IsValid() || _puzzle.FirstEmptyCell() != null)
+						{
+                            _viewState.PrintIncorrectWin();
+                        }
+						else
+						{
+                            _viewState.PrintCorrectWin();
+                        }
+						//errors = validator.validatewhole(puzzle);
+						//if (errors.count > 0 || puzzle.firstemptycelllocation() != null)
 						//{
-						//    View.PrintIncorrectWin();
+						//    _viewstate.printincorrectwin();
 						//}
 						//else
 						//{
-						//    View.PrintCorrectWin();
+						//    _viewstate.printcorrectwin();
 						//}
 						break;
 					default:

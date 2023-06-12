@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace sudoku.Creation
 {
-	interface ISudokuFactory
+	public interface ISudokuFactory
 	{
 		Puzzle CreatePuzzle(string file);
 	}

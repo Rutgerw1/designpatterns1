@@ -5,7 +5,7 @@ using System.Drawing;
 
 namespace sudoku.Creation
 {
-	class SudokuFactory : ISudokuFactory
+	public class SudokuFactory : ISudokuFactory
 	{
 		private readonly string _extension;
 		public Dictionary<string, Func<ISudokuFactory>> Types { get; }

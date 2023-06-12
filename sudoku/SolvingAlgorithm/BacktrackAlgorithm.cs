@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace sudoku.SolvingAlgorithm
 {
-	class BacktrackAlgorithm : ISolvingAlgorithm
+	public class BacktrackAlgorithm : ISolvingAlgorithm
 	{
 		public bool Solve(Puzzle puzzle)
 		{

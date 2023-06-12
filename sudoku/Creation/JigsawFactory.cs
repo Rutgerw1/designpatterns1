@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace sudoku.Creation
 {
-	class JigsawFactory : ISudokuFactory
+	public class JigsawFactory : ISudokuFactory
 	{
 		public Puzzle CreatePuzzle(string file)
 		{

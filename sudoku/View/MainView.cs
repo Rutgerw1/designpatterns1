@@ -2,7 +2,7 @@
 
 namespace sudoku.View
 {
-	class MainView : IView
+	public class MainView : IView
 	{
 		public void PrintMessage(string message, ConsoleColor foregroundColor = ConsoleColor.White, ConsoleColor backgroundColor = ConsoleColor.Black)
 		{

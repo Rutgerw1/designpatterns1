@@ -2,7 +2,7 @@
 
 namespace sudoku.View
 {
-	interface IView
+	public interface IView
 	{
 		void PrintMessage(string message, ConsoleColor foregroundColor, ConsoleColor backgroundColor);
 	}

@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace sudoku.Game
 {
-	class Cell : ISudokuComponent
+	public class Cell : ISudokuComponent
 	{
 		public Point Position { get; set; }
 		public int Value { get; set; }

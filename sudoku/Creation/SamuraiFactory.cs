@@ -5,7 +5,7 @@ using System.Drawing;
 
 namespace sudoku.Creation
 {
-	class SamuraiFactory : ISudokuFactory
+	public class SamuraiFactory : ISudokuFactory
 	{
 		public Puzzle CreatePuzzle(string file)
 		{

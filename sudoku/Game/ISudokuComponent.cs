@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace sudoku.Game
 {
-	interface ISudokuComponent
+	public interface ISudokuComponent
 	{
 		bool IsValid(int maxNumber);
 		void ChangeValueAtPosition(int value, Point position);

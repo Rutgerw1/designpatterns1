@@ -15,7 +15,7 @@ namespace sudoku.View.States
 			ReprintFactorX = 4;
 			ReprintFactorY = 2;
 
-			FitConsole();
+			//FitConsole();
 		}
 
 		public override void PrintCell(Point pos)

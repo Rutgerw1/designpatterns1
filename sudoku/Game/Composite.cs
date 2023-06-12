@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace sudoku.Game
 {
-	class Composite : ISudokuComponent
+	public class Composite : ISudokuComponent
 	{
 		public List<ISudokuComponent> Components { get; set; }
 
