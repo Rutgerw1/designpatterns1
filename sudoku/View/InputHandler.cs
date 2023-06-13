@@ -137,15 +137,6 @@ namespace sudoku.View
 						{
                             _viewState.PrintCorrectWin();
                         }
-						//errors = validator.validatewhole(puzzle);
-						//if (errors.count > 0 || puzzle.firstemptycelllocation() != null)
-						//{
-						//    _viewstate.printincorrectwin();
-						//}
-						//else
-						//{
-						//    _viewstate.printcorrectwin();
-						//}
 						break;
 					default:
 						if (char.IsDigit(input.KeyChar))

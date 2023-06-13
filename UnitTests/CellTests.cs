@@ -32,16 +32,14 @@ namespace UnitTests
         public void TestIsValid()
         {
             var cell = new Cell(new Point(1, 3), 2, 9);
-            var result = cell.IsValid(12);
-            Assert.IsTrue(result);
+            Assert.IsTrue(cell.IsValid(12));
         }
 
         [Test]
         public void TestIsNotValid()
         {
             var cell = new Cell(new Point(1, 3), 2, 9);
-            var result = cell.IsValid(1);
-            Assert.IsFalse(result);
+            Assert.IsFalse(cell.IsValid(1));
         }
 
         [Test]
@@ -72,8 +70,7 @@ namespace UnitTests
         {
             var cell = new Cell(new Point(1, 3), 2, 9);
             var testPoint = new Point(1, 3);
-            var result = cell.CellAtPosition(testPoint);
-            Assert.That(result, Is.EqualTo(cell));
+            Assert.That(cell.CellAtPosition(testPoint), Is.EqualTo(cell));
         }
 
         [Test]
@@ -81,24 +78,21 @@ namespace UnitTests
         {
             var cell = new Cell(new Point(1, 3), 2, 9);
             var testPoint = new Point(1, 4);
-            var result = cell.CellAtPosition(testPoint);
-            Assert.Null(result);
+            Assert.Null(cell.CellAtPosition(testPoint));
         }
 
         [Test]
         public void TestCellContains()
         {
             var cell = new Cell(new Point(1, 3), 2, 9);
-            var result = cell.Contains(new Point(1, 3));
-            Assert.True(result);
+            Assert.True(cell.Contains(new Point(1, 3)));
         }
 
         [Test]
         public void TestCellNotContains()
         {
             var cell = new Cell(new Point(1, 3), 2, 9);
-            var result = cell.Contains(new Point(1, 4));
-            Assert.False(result);
+            Assert.False(cell.Contains(new Point(1, 4)));
         }
 
         [Test]
