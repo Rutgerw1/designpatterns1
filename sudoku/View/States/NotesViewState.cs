@@ -13,16 +13,9 @@ namespace sudoku.View.States
 
 		public NotesViewState(Puzzle puzzle) : base(puzzle)
 		{
-			if (Puzzle.Components[0].GetType() == typeof(Puzzle))
-			{ // samurai
-				_notesWidth = 3;
-				_notesHeight = 3;
-			}
-			else
-			{
-				_notesWidth = (int)Math.Sqrt(Puzzle.Size);
-				_notesHeight = Puzzle.Size / _notesWidth;
-			}
+			_notesHeight = (int)Math.Sqrt(Puzzle.MaxNumber);
+			_notesWidth = Puzzle.MaxNumber / _notesHeight;
+
 			ReprintFactorX = 3 + _notesWidth;
 			ReprintFactorY = 1 + _notesHeight;
 		}

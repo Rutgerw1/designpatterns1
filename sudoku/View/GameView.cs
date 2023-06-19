@@ -3,6 +3,7 @@ using sudoku.View.States;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 
 namespace sudoku.View
@@ -148,18 +149,22 @@ namespace sudoku.View
 
 		public void FitConsole(int minWidth = 0)
 		{
-			Console.SetWindowSize(1, 1);
-			int width = Puzzle.Size * ReprintFactorX + 24;
-			int height = Puzzle.Size * ReprintFactorY + 4;
-
-			width = Math.Max(width, minWidth);
-
-			Console.SetBufferSize(width, height);
-			if (height > 63)
+			try // Console.SetWindowSize apparently breaks in unit tests so this is a workaround.
 			{
-				height = 63;
+				Console.SetWindowSize(1, 1);
+				int width = Puzzle.Size * ReprintFactorX + 24;
+				int height = Puzzle.Size * ReprintFactorY + 4;
+
+				width = Math.Max(width, minWidth);
+
+				Console.SetBufferSize(width, height);
+				if (height > 63)
+				{
+					height = 63;
+				}
+				Console.SetWindowSize(width, height);
 			}
-			Console.SetWindowSize(width, height);
+			catch (IOException) {}
 		}
 	}
 }

@@ -130,8 +130,6 @@ namespace sudoku.View
 								_viewState.PrintGame();
 								_viewState.ClearErrorMessage();
 								_viewState.PrintMessage("Solved in " + timer.Elapsed.ToString(@"m\:ss\.fff"));
-								Console.ReadKey(true);
-								quitGame = true;
 							}
 						}
 						break;

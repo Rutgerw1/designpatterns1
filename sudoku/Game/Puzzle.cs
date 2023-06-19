@@ -65,7 +65,7 @@ namespace sudoku.Game
 			}
 			else
 			{
-				ChangeValueAtPosition(value, Cursor);
+				if (ChangeValueAtPosition(value, Cursor)) return;
 			}
 		}
 
@@ -105,6 +105,11 @@ namespace sudoku.Game
 		public bool IsValid(Point? position = null)
 		{
 			return IsValid(MaxNumber, position);
+		}
+
+		public bool IsValidIgnoreConflicts(Point? position = null)
+		{
+			return IsValidIgnoreConflicts(MaxNumber, position);
 		}
 	}
 }

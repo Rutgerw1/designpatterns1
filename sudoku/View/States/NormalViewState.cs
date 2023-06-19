@@ -6,7 +6,6 @@ namespace sudoku.View.States
 {
 	internal class NormalViewState : GameView
 	{
-
 		public override int ReprintFactorX { get; }
 		public override int ReprintFactorY { get; }
 
@@ -15,7 +14,7 @@ namespace sudoku.View.States
 			ReprintFactorX = 4;
 			ReprintFactorY = 2;
 
-			//FitConsole();
+			FitConsole();
 		}
 
 		public override void PrintCell(Point pos)

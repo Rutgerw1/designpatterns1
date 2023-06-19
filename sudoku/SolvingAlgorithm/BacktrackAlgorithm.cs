@@ -13,7 +13,7 @@ namespace sudoku.SolvingAlgorithm
 				{
 					cell.ChangeValueAtPosition(i, cell.Position); // invoke method to deal with clearing of conflicts on other cells
 
-					if (puzzle.IsValid(cell.Position) && Solve(puzzle))
+					if (puzzle.IsValidIgnoreConflicts(cell.Position) && Solve(puzzle))
 					{
 						return true; // valid option found for cell
 					}

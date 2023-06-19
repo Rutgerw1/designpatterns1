@@ -32,16 +32,19 @@ namespace sudoku.Game
 			return true;
 		}
 
-		public void ChangeValueAtPosition(int value, Point position)
+		public bool ChangeValueAtPosition(int value, Point position)
 		{
-			if (Contains(position))
+			bool changed = false;
+			if (Contains(position) && Value != value)
 			{
 				Value = value;
 				Conflicts.ForEach(conflict => {
 					if (conflict != this) conflict.Conflicts.Remove(this);
 				});
 				Conflicts.Clear();
+				changed = true;
 			}
+			return changed;
 		}
 
 		public void ToggleNoteAtPosition(int value, Point position)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 
@@ -54,7 +55,7 @@ namespace sudoku.Game
 			{
 				if (valueCells?.Count > 1)
 				{ // composite contains multiple cells with the same value
-					foreach(Cell cell in valueCells)
+					foreach (Cell cell in valueCells)
 					{
 						IEnumerable<Cell> others = valueCells.Where(other => other != cell);
 						cell.Conflicts.AddRange(others);
@@ -66,12 +67,39 @@ namespace sudoku.Game
 			return childrenValid && !conflicts;
 		}
 
-		public void ChangeValueAtPosition(int value, Point position)
+		// added for use in solving algorithms for improved efficiency, and because we don't care about marking conflicts
+		public bool IsValidIgnoreConflicts(int maxNumber, Point? position = null)
+		{
+			if (position != null && !Contains(position.Value)) return true;
+
+			if (Components.Any(component => !component.IsValid(maxNumber, position))) return false;
+
+			List<Cell> cells = Components.OfType<Cell>().ToList();
+
+			if (!cells.Any()) return true;
+
+			BitArray encountered = new BitArray(maxNumber);
+
+			foreach(Cell cell in cells)
+			{
+				int index = cell.Value - 1;
+
+				if (encountered[index]) return false;
+				encountered[index] = true;
+			}
+
+			return true;
+		}
+
+		public bool ChangeValueAtPosition(int value, Point position)
 		{
 			foreach (ISudokuComponent component in Components)
 			{
-				component.ChangeValueAtPosition(value, position);
+				if (component.ChangeValueAtPosition(value, position)) {
+					return true;
+				}
 			}
+			return false;
 		}
 
 		public void ToggleNoteAtPosition(int value, Point position)
