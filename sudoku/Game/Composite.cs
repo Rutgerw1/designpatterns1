@@ -80,7 +80,7 @@ namespace sudoku.Game
 
 			BitArray encountered = new BitArray(maxNumber);
 
-			foreach(Cell cell in cells)
+			foreach (Cell cell in cells)
 			{
 				int index = cell.Value - 1;
 
@@ -95,7 +95,8 @@ namespace sudoku.Game
 		{
 			foreach (ISudokuComponent component in Components)
 			{
-				if (component.ChangeValueAtPosition(value, position)) {
+				if (component.ChangeValueAtPosition(value, position))
+				{
 					return true;
 				}
 			}

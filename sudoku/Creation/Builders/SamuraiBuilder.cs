@@ -1,10 +1,7 @@
 ﻿using sudoku.Game;
-using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace sudoku.Creation.Builders
 {
@@ -24,11 +21,11 @@ namespace sudoku.Creation.Builders
 			List<Cell> subPuzzleCells = new List<Cell>();
 			List<(Cell, Cell)> toReplace = new List<(Cell, Cell)>();
 
-			foreach(ISudokuComponent component in subPuzzle.Components)
+			foreach (ISudokuComponent component in subPuzzle.Components)
 			{
 				if (component is Composite composite)
 				{
-					foreach(ISudokuComponent cellComponent in composite.Components)
+					foreach (ISudokuComponent cellComponent in composite.Components)
 					{
 						if (cellComponent is Cell cell)
 						{
@@ -40,7 +37,7 @@ namespace sudoku.Creation.Builders
 
 			subPuzzleCells = subPuzzleCells.Distinct().ToList();
 
-			foreach(Cell cell in subPuzzleCells)
+			foreach (Cell cell in subPuzzleCells)
 			{
 				cell.Offset(offset);
 
@@ -57,7 +54,7 @@ namespace sudoku.Creation.Builders
 				}
 			}
 
-			foreach((Cell old, Cell new_) in toReplace)
+			foreach ((Cell old, Cell new_) in toReplace)
 			{
 				subPuzzle.ReplaceComponent(old, new_);
 			}

@@ -164,7 +164,7 @@ namespace sudoku.View
 				}
 				Console.SetWindowSize(width, height);
 			}
-			catch (IOException) {}
+			catch (IOException) { }
 		}
 	}
 }

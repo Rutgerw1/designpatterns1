@@ -136,12 +136,12 @@ namespace sudoku.View
 					case ConsoleKey.Enter:
 						if (!_puzzle.IsValid() || _puzzle.FirstEmptyCell() != null)
 						{
-                            _viewState.PrintIncorrectWin();
-                        }
+							_viewState.PrintIncorrectWin();
+						}
 						else
 						{
-                            _viewState.PrintCorrectWin();
-                        }
+							_viewState.PrintCorrectWin();
+						}
 						break;
 					default:
 						if (char.IsDigit(input.KeyChar))

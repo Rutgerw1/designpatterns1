@@ -9,7 +9,7 @@ namespace sudoku.Game
 		public int Value { get; set; }
 		public int RegionNumber { get; }
 		public List<int> Notes { get; }
-		public List<Cell> Conflicts { get;}
+		public List<Cell> Conflicts { get; }
 
 		public Cell(Point position, int value, int regionCounter)
 		{
@@ -38,7 +38,8 @@ namespace sudoku.Game
 			if (Contains(position) && Value != value)
 			{
 				Value = value;
-				Conflicts.ForEach(conflict => {
+				Conflicts.ForEach(conflict =>
+				{
 					if (conflict != this) conflict.Conflicts.Remove(this);
 				});
 				Conflicts.Clear();

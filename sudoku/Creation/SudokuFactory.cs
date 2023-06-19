@@ -1,7 +1,6 @@
 ﻿using sudoku.Game;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace sudoku.Creation
 {
