@@ -20,8 +20,10 @@ namespace sudoku.Game
 			Conflicts = new List<Cell>();
 		}
 
-		public bool IsValid(int maxNumber)
+		public bool IsValid(int maxNumber, Point? position)
 		{
+			if (position != null && !Contains(position.Value)) return true;
+
 			if (Value > maxNumber)
 			{
 				if (!Conflicts.Contains(this)) Conflicts.Add(this);

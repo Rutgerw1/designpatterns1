@@ -18,13 +18,15 @@ namespace sudoku.Game
 			Components.Add(component);
 		}
 
-		public bool IsValid(int maxNumber)
+		public bool IsValid(int maxNumber, Point? position)
 		{
+			if (position != null && !Contains(position.Value)) return true;
+
 			bool childrenValid = true;
 			// can't use Any or All because we want to check every element, always
 			Components.ForEach(component =>
 			{
-				if (!component.IsValid(maxNumber)) childrenValid = false;
+				if (!component.IsValid(maxNumber, position)) childrenValid = false;
 			});
 
 			List<Cell> cells = Components.OfType<Cell>().ToList();

@@ -5,7 +5,7 @@ namespace sudoku.Game
 {
 	public interface ISudokuComponent
 	{
-		bool IsValid(int maxNumber);
+		bool IsValid(int maxNumber, Point? position);
 		void ChangeValueAtPosition(int value, Point position);
 		void ToggleNoteAtPosition(int value, Point position);
 		Cell CellAtPosition(Point position);

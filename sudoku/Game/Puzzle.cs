@@ -102,9 +102,9 @@ namespace sudoku.Game
 			return errors;
 		}
 
-		public bool IsValid()
+		public bool IsValid(Point? position = null)
 		{
-			return IsValid(MaxNumber);
+			return IsValid(MaxNumber, position);
 		}
 	}
 }

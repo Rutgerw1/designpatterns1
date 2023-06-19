@@ -4,6 +4,7 @@ using sudoku.SolvingAlgorithm;
 using sudoku.View.States;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -13,10 +14,10 @@ namespace sudoku.View
 {
 	public class InputHandler
 	{
-		private MainView _mainView { get; }
-		private Puzzle _puzzle { get; set; }
-		private IViewState _viewState { get; set; }
-		private ISolvingAlgorithm _solver { get; }
+		private readonly MainView _mainView;
+		private Puzzle _puzzle;
+		private IViewState _viewState;
+		private readonly ISolvingAlgorithm _solver;
 
 		public InputHandler(MainView mainView, ISolvingAlgorithm solver)
 		{
@@ -116,7 +117,10 @@ namespace sudoku.View
 						}
 						else
 						{
+							Stopwatch timer = new Stopwatch();
+							timer.Start();
 							bool solved = _solver.Solve(_puzzle);
+							timer.Stop();
 							if (!solved)
 							{
 								_viewState.PrintUnsolvable();
@@ -124,6 +128,9 @@ namespace sudoku.View
 							else
 							{
 								_viewState.PrintGame();
+								_viewState.ClearErrorMessage();
+								_viewState.PrintMessage("Solved in " + timer.Elapsed.ToString(@"m\:ss\.fff"));
+								Console.ReadKey(true);
 								quitGame = true;
 							}
 						}

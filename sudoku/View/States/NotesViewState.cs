@@ -6,8 +6,8 @@ namespace sudoku.View.States
 {
 	internal class NotesViewState : GameView
 	{
-		private int _notesWidth { get; }
-		private int _notesHeight { get; }
+		private readonly int _notesWidth;
+		private readonly int _notesHeight;
 		public override int ReprintFactorX { get; }
 		public override int ReprintFactorY { get; }
 
