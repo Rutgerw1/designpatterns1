@@ -42,7 +42,7 @@ namespace UnitTests
             composite.AddComponent(cell2);
             puzzle.AddComponent(composite);
 
-            Assert.True(puzzle.IsValid(2));
+            Assert.True(puzzle.IsValid());
         }
 
         [Test]

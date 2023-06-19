@@ -18,7 +18,7 @@ namespace sudoku.Game
 			Components.Add(component);
 		}
 
-		public bool IsValid(int maxNumber, Point? position)
+		public bool IsValid(int maxNumber, Point? position = null)
 		{
 			if (position != null && !Contains(position.Value)) return true;
 
